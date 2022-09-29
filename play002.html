@@ -11,16 +11,21 @@
 <script src="play/THREE.Terrain.min.js"></script>
 <script type="text/javascript">
 
-/*document.body.addEventListener("wheel", myFunction);
+/*document.body.addEventListener("wheel", wheelJump);
 
-function myFunction() {
-  console.log("35px");
+function wheelJump() {
+if (canJump === true) velocity.y += 450;
+                canJump = false;
+  console.log("canJump");
 }
 */
 
 function openFullscreen() {
       //var elem = document.getElementById("id-webglcanvas");
       var elem = document.getElementsByTagName("canvas")[0];
+
+	//blocker.style.display = 'block'; //block
+        //instructions.style.display = ''; //""
 
       if (elem.requestFullscreen) {
         elem.requestFullscreen();
@@ -447,8 +452,11 @@ for (var i=0; i<objects.length; i++) {
 objects[i].visible = frustum.intersectsObject( objects[i] );
 } */
 //        }
-//
+
+
+//SETUP THREEJS
 function setupThreeJS() {
+
 scene = new THREE.Scene();
 scene.background = new THREE.Color(0x555555);
 //purple fog
@@ -481,9 +489,10 @@ camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.do
 //camera.position.set(450,00,-425);
 //camera.lookAt(new THREE.Vector3(-20, 0, 30));
 
-//EXIT BOX LOCATION (TEASER)
-camera.position.set(-202,-60,-331);
-camera.lookAt(new THREE.Vector3(-450, -100, 850)); 
+//PLAYER START POSITION
+camera.position.set(250,10,26);
+camera.lookAt(new THREE.Vector3(-450, -100, 850));
+camera.rotation.y=-Math.PI/1.7;
 scene.add(camera);
 
 var materialSphere01 = new THREE.MeshLambertMaterial({
@@ -492,7 +501,6 @@ var materialSphere01 = new THREE.MeshLambertMaterial({
         opacity: 0.5
     });
 //var sphere02 = new THREE.Mesh(new THREE.SphereGeometry(400), materialSphere01);
-  
 
 clock = new THREE.Clock(false); 
 
@@ -559,7 +567,8 @@ var materialSide = new THREE.MeshBasicMaterial( { color: 0xff8800 } );
 var star = new THREE.Mesh( starGeometry, starMaterial );
 	//var wireframeTexture = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } ); 
 	//var star = new THREE.Mesh( starGeometry, wireframeTexture );
-	star.position.set(0,50,0);
+	star.position.set(-202,60,-331);// 0 50 0
+	//star.rotation.set(90)
 	scene.add(star);
 
 // MERGE TEST//////////////////////////////////////////////////////////////////////
@@ -890,7 +899,7 @@ instructions.addEventListener('click', function() {
 	    case 45:// x
 	    case 44:// z
             case 32: // space
-                if (canJump === true) velocity.y += 350;
+                if (canJump === true) velocity.y += 450;
                 canJump = false;
                 break;
 
@@ -1106,7 +1115,7 @@ function render() {
 <div id="instructions" style="text-align: center;">
 <span id="play" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Play :: </span>
 
-<span id="playfullscreen" onClick="openFullscreen();" style="font-size:36px;color:LIGHTBLUE;cursor:pointer;text-decoration: underline;">:: Play :: </span>
+<span id="playfullscreen" onClick="openFullscreen();" style="font-size:26px;color:LIGHTBLUE;cursor:pointer;text-decoration: underline;">:: Fullscreen :: </span>
 
 <!-- video intro information :: Move: WASD<br>
 Jump: SPACE<br>
