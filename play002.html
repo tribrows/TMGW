@@ -49,15 +49,6 @@
 
 <script type="text/javascript">
 
-function setup() {
-
-//init();
-render();
-setupThreeJS();
-setupWorld();
-
-}
-
 /*document.body.addEventListener("wheel", wheelJump);
 
 function wheelJump() {
@@ -159,9 +150,17 @@ renderer = new THREE.WebGLRenderer({
 aspr = 1.0;
 camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
 
+function setup() {
+
+//init();
+render();
+setupThreeJS();
+setupWorld();
+
+}
 
 //SETUP THREEJS
-//function setupThreeJS() {
+function setupThreeJS() {
 
 scene = new THREE.Scene();
 scene.background = new THREE.Color(0x555555);
@@ -695,9 +694,9 @@ var crate = new THREE.Mesh( geo.clone());
 
 flipMesh(crate);
 
-//} //close setupworld function
-
 // Add Terrain//////////////////////////////////////
+
+}
 
 function flipMesh(object3D) {
 
@@ -770,7 +769,6 @@ video.style.display = 'none';
 overlay.style.display = 'none';
 }
 
-setup();
 </script>
 </head>
 
@@ -781,14 +779,12 @@ setup();
     src="./videos/TMGW_INTRO.mp4"
     type='video/mp4'>
     <!--<source id='webm'
-    src="http://media.w3.org/2010/05/sintel/trailer.webm"
+    src="./videos/TMGW_INTRO.webm"
     type='video/webm'>
     <source id='ogv'
-    src="http://media.w3.org/2010/05/sintel/trailer.ogv"
+    src="./videos/TMGW_INTRO.ogv"
     type='video/ogg'>-->
     <p>Your user agent does not support the HTML5 Video element.</p>
-
-
   </video>
   <div id="overlay" onClick="hideVideo();" style="font-size:26px;color:#777!important;cursor:pointer;text-decoration: underline;"> :: Are we rolling? ::</div>
 
@@ -797,8 +793,8 @@ setup();
 <div id="instructions" style="text-align: center;">
 <span id="play" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Play :: </span>
 
-<span id="playfullscreen" onClick="openFullscreen();" style="font-size:26px;color:LIGHTBLUE;cursor:pointer;text-decoration: underline;">:: Fullscreen :: </span>
-<br><div style="color:#777!important;"> Move: WASD :: Jump: SPACE :: Look: MOUSE 
+<span id="playfullscreen" onClick="openFullscreen();" style="font-size:26px;color:#lightblue!important;cursor:pointer;text-decoration: underline;">:: Fullscreen :: </span>
+<br><div style="color:#777!important;"> Move: WASD :: Jump: SPACE :: Look: MOUSE <br> ( Hit F5/reload page to fix load error..doh!)
 
 </div>
 </div>
