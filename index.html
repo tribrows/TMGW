@@ -1,5 +1,24 @@
 <!DOCTYPE html>
-<html style="background-color:#555"><head>
+<html style="background-color:#555">
+<head>
+
+<script src="./play/dataurls.js"></script>
+<script src="./play/three.min.js"></script>
+<script src="./play/PointerLockControls.js"></script>
+<script src="./play/CanvasRenderer.js"></script>
+<script src="./play/Projector.js"></script>
+<script src="./play/THREE.Terrain.min.js"></script>
+
+<!--THREE version 91-->
+<script async src="./play/GLTFLoader.js"></script>
+
+<!--
+<script src="https://unpkg.com/three@0.91.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/js/loaders/GLTFLoader.js" </script>
+
+-->
+
+
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <title>:: Play ::</title>
@@ -20,14 +39,6 @@
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="./image/ms-icon-144x144.png">
 <meta name="theme-color" content="#ffffff">
-
-<script src="./play/dataurls.js"></script>
-<script src="./play/three.min.js"></script>
-<script src="./play/PointerLockControls.js"></script>
-<script src="./play/CanvasRenderer.js"></script>
-<script src="./play/Projector.js"></script>
-<script src="./play/THREE.Terrain.min.js"></script>
-
 
 <style>
   #overlay {
@@ -188,9 +199,25 @@ camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.do
 
 //PLAYER START POSITION
 camera.position.set(250,10,26);
-camera.lookAt(new THREE.Vector3(-450, -100, 850));
-camera.rotation.y=-Math.PI/1.7;
+camera.lookAt(new THREE.Vector3(-250, -150, -2550));
 scene.add(camera);
+
+//START CAMERA SHAKE & ANIMATION
+camera.lookAt(new THREE.Vector3(-250, -150, -2550));
+
+
+//GLTF LOADER
+var loader = new THREE.GLTFLoader();
+
+//add tmgw_logo_jump.glb
+loader.load( './models/arewerolling_jump.glb', function ( gltf ) {
+
+gltf.scene.position.y = 8;
+scene.add( gltf.scene );
+render();
+
+} );
+
 
 var materialSphere01 = new THREE.MeshLambertMaterial({
         color: 0x0000ff,
@@ -815,4 +842,6 @@ overlay.style.display = 'none';
 <canvas style="width: 1280px; height: 431px;" width="1280"
 </div>
 -->
-</body></html>
+</body>
+
+</html>
