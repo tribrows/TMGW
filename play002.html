@@ -49,6 +49,15 @@
 
 <script type="text/javascript">
 
+function setup() {
+
+//init();
+render();
+setupThreeJS();
+setupWorld();
+
+}
+
 /*document.body.addEventListener("wheel", wheelJump);
 
 function wheelJump() {
@@ -150,17 +159,9 @@ renderer = new THREE.WebGLRenderer({
 aspr = 1.0;
 camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
 
-function setup() {
-
-//init();
-render();
-setupThreeJS();
-setupWorld();
-
-}
 
 //SETUP THREEJS
-function setupThreeJS() {
+//function setupThreeJS() {
 
 scene = new THREE.Scene();
 scene.background = new THREE.Color(0x555555);
@@ -694,9 +695,9 @@ var crate = new THREE.Mesh( geo.clone());
 
 flipMesh(crate);
 
-// Add Terrain//////////////////////////////////////
+//} //close setupworld function
 
-}
+// Add Terrain//////////////////////////////////////
 
 function flipMesh(object3D) {
 
@@ -769,6 +770,7 @@ video.style.display = 'none';
 overlay.style.display = 'none';
 }
 
+setup();
 </script>
 </head>
 
@@ -788,7 +790,7 @@ overlay.style.display = 'none';
 
 
   </video>
-  <div id="overlay" onClick="hideVideo();" style="font-size:26px;color:LIGHTBLUE;cursor:pointer;text-decoration: underline;"> :: Are we rolling? ::</div>
+  <div id="overlay" onClick="hideVideo();" style="font-size:26px;color:#777!important;cursor:pointer;text-decoration: underline;"> :: Are we rolling? ::</div>
 
 <div id="scenes">
 <div id="blocker" style="display: block;">
