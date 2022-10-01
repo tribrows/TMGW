@@ -213,8 +213,8 @@ var loader = new THREE.GLTFLoader();
 loader.load( './models/arewerolling_jump.glb', function ( gltf ) {
 
 var rolling = gltf.scene;
-rolling.scale.set(100*rolling.scale.x, 100*rolling.scale.y, 100 * rolling.scale.z)
-rolling.rotation.y = 80;
+rolling.scale.set(50*rolling.scale.x, 50*rolling.scale.y, 50 * rolling.scale.z)
+rolling.rotation.y = 180;
 rolling.position = [0,0,0];
 scene.add( rolling );
 render();
@@ -226,7 +226,7 @@ var loader2 = new THREE.GLTFLoader();
 loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
 
 var logo = gltf.scene;
-logo.scale.set(100*logo.scale.x, 100*logo.scale.y, 100 * logo.scale.z)
+logo.scale.set(50*logo.scale.x, 50*logo.scale.y, 50 * logo.scale.z)
 logo.rotation.y = 80;
 logo.position = [50,50,50];
 scene.add( logo );
@@ -235,19 +235,20 @@ render();
 } );
 
 //ADD :: feather particles
+/*
 var loader3 = new THREE.GLTFLoader();
 
 loader3.load( './models/tmgw_text_pillowfight.glb', function ( gltf ) {
 
 var text = gltf.scene;
-text.scale.set(100*text.scale.x, 100*text.scale.y, 100 * text.scale.z)
+text.scale.set(50*text.scale.x, 50*text.scale.y, 50 * text.scale.z)
 text.rotation.y = 80;
-text.position = [150,150,150];
+text.position = [50,50,50];
 scene.add( text );
 render();
 
 } );
-
+*/
 
 var materialSphere01 = new THREE.MeshLambertMaterial({
         color: 0x0000ff,
