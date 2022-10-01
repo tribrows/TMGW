@@ -60,6 +60,7 @@
 
 <script type="text/javascript">
 
+
 /*document.body.addEventListener("wheel", wheelJump);
 
 function wheelJump() {
@@ -166,7 +167,7 @@ function setup() {
 //init();
 render();
 setupThreeJS();
-setupWorld();
+//setupWorld();
 
 }
 
@@ -178,6 +179,7 @@ scene.background = new THREE.Color(0x555555);
 //purple fog
 scene.fog = new THREE.FogExp2(0x860081, 0.003);
 
+/*
 water = new THREE.Mesh(
 new THREE.PlaneBufferGeometry(16384+1024, 16384+1024, 16, 16),
 new THREE.MeshLambertMaterial({color: 0x0055ff, transparent: true, opacity: 0.6})
@@ -185,7 +187,8 @@ new THREE.MeshLambertMaterial({color: 0x0055ff, transparent: true, opacity: 0.6}
 water.position.y = -99;
 water.rotation.x = -0.5 * Math.PI;
 
-//scene.add(water);
+scene.add(water);
+*/
 
 renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -208,43 +211,38 @@ camera.lookAt(new THREE.Vector3(-250, -150, -2550));
 
 //GLTF LOADERS
 // FIX :: textures & compress
-var loader = new THREE.GLTFLoader();
 
+var loader = new THREE.GLTFLoader();
 loader.load( './models/arewerolling_jump.glb', function ( gltf ) {
 
 var rolling = gltf.scene;
-rolling.scale.set(50*rolling.scale.x,50*rolling.scale.y,50*rolling.scale.z)
+rolling.scale.set(40*rolling.scale.x,40*rolling.scale.y,40*rolling.scale.z)
 rolling.rotation.y = 360;
-rolling.position = [0,0,0];
-scene.add( rolling );
-render();
+rolling.position = [40,40,40];
 
 } );
 
 var loader2 = new THREE.GLTFLoader();
-
 loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
 
 var logo = gltf.scene;
 logo.scale.set(50*logo.scale.x,50*logo.scale.y,50*logo.scale.z)
 logo.rotation.y = 360;
 logo.position = [-50,-50,-50];
-scene.add( logo );
-render();
 
 } );
 
 //ADD :: feather particles
 
 var loader3 = new THREE.GLTFLoader();
-
 loader3.load( './models/tmgw_text_pillowfight.glb', function ( gltf ) {
 
 var text = gltf.scene;
 text.scale.set(50*text.scale.x, 50*text.scale.y, 50 * text.scale.z)
 text.rotation.y = 360;
 text.position = [50,50,50];
-scene.add( text );
+
+scene.add( text,rolling,logo );
 render();
 
 } );
@@ -515,7 +513,7 @@ clippingPlanes: [ localPlane ],
 */
 
 /////////////////////////////////////////////////////////
-//INTERESTING RAMP GOMETRY
+//INTERESTING RAMP GEOMETRY
 /*
 var xS = 63, yS = 1;
 terrainDeck = THREE.Terrain({
@@ -746,7 +744,7 @@ instructions.addEventListener('click', function() {
 				objects.push( box );    
 				}     
     */
-    //FLIP MESH///////////////////////////////////////
+//FLIP MESH///////////////////////////////////////
 
 var geo = terrainScene.children[0].geometry;
 var crate = new THREE.Mesh( geo.clone());
@@ -755,7 +753,8 @@ flipMesh(crate);
 
 // Add Terrain//////////////////////////////////////
 
-}
+render();
+}//END OF setupThreeJS
 
 function flipMesh(object3D) {
 
