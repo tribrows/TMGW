@@ -227,8 +227,8 @@ loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
 
 var logo = gltf.scene;
 logo.scale.set(50*logo.scale.x,50*logo.scale.y,50*logo.scale.z)
-logo.rotation.y = 80;
-logo.position = [0,0,0];
+logo.rotation.y = 360;
+logo.position = [-50,-50,-50];
 scene.add( logo );
 render();
 
@@ -249,6 +249,7 @@ render();
 
 } );
 
+var ambient = new THREE.AmbientLight( 0x555555 ); scene.add(ambient);
 
 var materialSphere01 = new THREE.MeshLambertMaterial({
         color: 0x0000ff,
