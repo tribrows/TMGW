@@ -207,14 +207,16 @@ camera.lookAt(new THREE.Vector3(-250, -150, -2550));
 
 
 //GLTF LOADERS
+// FIX :: textures & compress
 var loader = new THREE.GLTFLoader();
 
 loader.load( './models/arewerolling_jump.glb', function ( gltf ) {
 
 var arewerolling = gltf.scene;
-arewerolling.scale = [10,10,10];
-arewerolling.position.y = 8;
-scene.add( arewerolling );
+rolling.scale.set(100*rolling.scale.x, 100*rolling.scale.y, 100 * rolling.scale.z)
+rolling.rotation.y = 80;
+rolling.position = [0,0,0];
+scene.add( rolling );
 render();
 
 } );
@@ -224,9 +226,24 @@ var loader2 = new THREE.GLTFLoader();
 loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
 
 var logo = gltf.scene;
-logo.scale = [10,10,10];
+logo.scale.set(100*logo.scale.x, 100*logo.scale.y, 100 * logo.scale.z)
+logo.rotation.y = 80;
 logo.position = [50,50,50];
 scene.add( logo );
+render();
+
+} );
+
+//ADD :: feather particles
+var loader3 = new THREE.GLTFLoader();
+
+loader3.load( './models/tmgw_text_pillowfight.glb', function ( gltf ) {
+
+var text = gltf.scene;
+text.scale.set(100*text.scale.x, 100*text.scale.y, 100 * text.scale.z)
+text.rotation.y = 80;
+text.position = [150,150,150];
+scene.add( text );
 render();
 
 } );
