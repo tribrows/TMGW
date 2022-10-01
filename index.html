@@ -212,7 +212,7 @@ var loader = new THREE.GLTFLoader();
 
 loader.load( './models/arewerolling_jump.glb', function ( gltf ) {
 
-var arewerolling = gltf.scene;
+var rolling = gltf.scene;
 rolling.scale.set(100*rolling.scale.x, 100*rolling.scale.y, 100 * rolling.scale.z)
 rolling.rotation.y = 80;
 rolling.position = [0,0,0];
