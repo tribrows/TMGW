@@ -220,6 +220,8 @@ rolling.scale.set(40*rolling.scale.x,40*rolling.scale.y,40*rolling.scale.z)
 rolling.rotation.y = 360;
 rolling.position = [40,40,40];
 
+scene.add( rolling );
+render();
 } );
 
 var loader2 = new THREE.GLTFLoader();
@@ -230,6 +232,8 @@ logo.scale.set(50*logo.scale.x,50*logo.scale.y,50*logo.scale.z)
 logo.rotation.y = 360;
 logo.position = [-50,-50,-50];
 
+scene.add( logo );
+render();
 } );
 
 //ADD :: feather particles
@@ -242,7 +246,7 @@ text.scale.set(50*text.scale.x, 50*text.scale.y, 50 * text.scale.z)
 text.rotation.y = 360;
 text.position = [50,50,50];
 
-scene.add( text,rolling,logo );
+scene.add( text );
 render();
 
 } );
