@@ -206,14 +206,27 @@ scene.add(camera);
 camera.lookAt(new THREE.Vector3(-250, -150, -2550));
 
 
-//GLTF LOADER
+//GLTF LOADERS
 var loader = new THREE.GLTFLoader();
 
-//add tmgw_logo_jump.glb
 loader.load( './models/arewerolling_jump.glb', function ( gltf ) {
 
-gltf.scene.position.y = 8;
-scene.add( gltf.scene );
+var arewerolling = gltf.scene;
+arewerolling.scale = [10,10,10];
+arewerolling.position.y = 8;
+scene.add( arewerolling );
+render();
+
+} );
+
+var loader2 = new THREE.GLTFLoader();
+
+loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
+
+var logo = gltf.scene;
+logo.scale = [10,10,10];
+logo.position = [50,50,50];
+scene.add( logo );
 render();
 
 } );
@@ -820,7 +833,7 @@ overlay.style.display = 'none';
 <div id="instructions" style="text-align: center;">
 <span id="play" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Play :: </span>
 
-<span id="playfullscreen" onClick="openFullscreen();" style="font-size:26px;color:lightblue!important;cursor:pointer;text-decoration: underline;">:: Fullscreen :: </span>
+<span id="playfullscreen" onClick="openFullscreen();" style="font-size:36px;color:lightblue!important;cursor:pointer;text-decoration: underline;">:: Fullscreen :: </span>
 <br><div style="color:#777!important;"> Move: WASD :: Jump: SPACE :: Look: MOUSE <br> ( Hit F5/reload page to fix load error..doh!)
 
 </div>
