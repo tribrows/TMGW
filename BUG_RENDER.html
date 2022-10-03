@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html style="background-color:#555">
+<head>
+
+<script src="./js/dataurls.js"></script>
+<script src="./js/three.min.js"></script>
+<script src="./js/PointerLockControls.js"></script>
+<script src="./js/CanvasRenderer.js"></script>
+<script src="./js/Projector.js"></script>
+<script src="./js/THREE.Terrain.min.js"></script>
+
+<!--THREE JS version 91-->
+<script async src="./js/GLTFLoader.js"></script>
+
+<!--
+<script src="https://unpkg.com/three@0.91.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/js/loaders/GLTFLoader.js" </script>
+
+-->
+
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>:: Play ::</title>
+<link rel="apple-touch-icon" sizes="57x57" href="./images/favicons/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="./images/favicons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="./images/favicons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="./images/favicons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="./images/favicons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="./images/favicons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="./images/favicons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="./images/favicons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./images/favicons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="./images/favicons/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./images/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="./images/favicons/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./images/favicons/favicon-16x16.png">
+<link rel="manifest" href="./images/favicons/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="./images/favicons/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<style>
+  #overlay {
+  position: absolute; 
+  top: 500px; 
+  color: #555; 
+  text-align: center;
+  font-size: 20px;
+  
+  width: 100%;
+  padding: 10px 0;
+  z-index: 100;
+}
+
+#v {
+  z-index: 1;
+}
+</style>
+
+<script type="text/javascript">
+
+
+/*document.body.addEventListener("wheel", wheelJump);
+
+function wheelJump() {
+if (canJump === true) velocity.y += 450;
+                canJump = false;
+  console.log("canJump");
+}
+*/
+
+function openFullscreen() {
+      //var elem = document.getElementById("id-webglcanvas");
+      var elem = document.getElementsByTagName("canvas")[0];
+
+	//blocker.style.display = 'block'; //block
+        //instructions.style.display = ''; //""
+
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) { /* Firefox */
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE/Edge */
+        elem.msRequestFullscreen();
+      }
+      elem.style.width = '100%';
+      elem.style.height = '100%';
+
+    }
+
+function animate() {
+
+    requestAnimationFrame(animate);
+    if (controls.isLocked === true) {
+
+        raycaster.ray.origin.copy(controls.getObject().position);
+        raycaster.ray.origin.y -= 10;
+
+        var intersections = raycaster.intersectObjects(objects);
+        var onObject = intersections.length > 0;
+        var time = performance.now();
+        var delta = (time - prevTime) / 1000;
+
+        velocity.x -= velocity.x * 10.0 * delta;
+        velocity.z -= velocity.z * 10.0 * delta;
+        velocity.y -= 9.8 * 100.0 * delta;
+
+        direction.z = Number(moveForward) - Number(moveBackward);
+        direction.x = Number(moveRight) - Number(moveLeft);
+        direction.normalize();
+
+        if (moveForward || moveBackward) velocity.z -= direction.z * 800.0 * delta;
+        if (moveLeft || moveRight) velocity.x -= direction.x * 800.0 * delta;
+
+        if (onObject === true) {
+            velocity.y = Math.max(0, velocity.y);
+            canJump = true;
+        }
+
+        controls.moveRight(-velocity.x * delta);
+        controls.moveForward(-velocity.z * delta);
+        controls.getObject().position.y += (velocity.y * delta);
+
+        if (controls.getObject().position.y < -60) {
+            velocity.y = 0;
+            controls.getObject().position.y = -60;
+            canJump = true;
+
+        }
+        prevTime = time;
+    }}
+    
+var blocker = document.getElementById('blocker');
+var instructions = document.getElementById('instructions');
+
+var objects = [];
+var raycaster;
+var moveForward = false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
+var canJump = false;
+
+var prevTime = performance.now();
+var velocity = new THREE.Vector3();
+var direction = new THREE.Vector3();
+var vertex = new THREE.Vector3();
+var color = new THREE.Color();
+
+var VRButton = "";
+var controls = "";
+
+var camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water;
+
+
+scene = new THREE.Scene();
+renderer = new THREE.WebGLRenderer({
+            //antialias: true
+        });
+aspr = 1.0;
+camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
+
+function setup() {
+
+//init();
+render();
+setupThreeJS();
+//setupWorld();
+
+}
+
+//SETUP THREEJS
+function setupThreeJS() {
+
+scene = new THREE.Scene();
+scene.background = new THREE.Color(0x555555);
+//purple fog
+scene.fog = new THREE.FogExp2(0x860081, 0.003);
+
+/*
+water = new THREE.Mesh(
+new THREE.PlaneBufferGeometry(16384+1024, 16384+1024, 16, 16),
+new THREE.MeshLambertMaterial({color: 0x0055ff, transparent: true, opacity: 0.6})
+);
+water.position.y = -99;
+water.rotation.x = -0.5 * Math.PI;
+
+scene.add(water);
+*/
+
+renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+var blocker = document.getElementById('blocker');
+var instructions = document.getElementById('instructions');
+document.getElementById('scenes').appendChild(renderer.domElement);
+//renderer.domElement.setAttribute('tabindex', -1);
+
+camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
+
+//PLAYER START POSITION
+camera.position.set(250,10,26);
+camera.lookAt(new THREE.Vector3(-250, -150, -2550));
+scene.add(camera);
+
+//START CAMERA SHAKE & ANIMATION
+camera.lookAt(new THREE.Vector3(-250, -150, -2550));
+
+
+//GLTF LOADERS
+// FIX :: textures & compress
+
+var loader = new THREE.GLTFLoader();
+loader.load( './models/arewerolling_jump.glb', function ( gltf ) {
+
+var rolling = gltf.scene;
+rolling.scale.set(40*rolling.scale.x,40*rolling.scale.y,40*rolling.scale.z)
+rolling.rotation.y = 360;
+rolling.position = [40,40,40];
+
+scene.add( rolling );
+render();
+} );
+
+var loader2 = new THREE.GLTFLoader();
+loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
+
+var logo = gltf.scene;
+logo.scale.set(50*logo.scale.x,50*logo.scale.y,50*logo.scale.z)
+logo.rotation.y = 360;
+logo.position = [-50,-50,-50];
+
+scene.add( logo );
+render();
+} );
+
+//ADD :: feather particles
+
+var loader3 = new THREE.GLTFLoader();
+loader3.load( './models/tmgw_text_pillowfight.glb', function ( gltf ) {
+
+var text = gltf.scene;
+text.scale.set(50*text.scale.x, 50*text.scale.y, 50 * text.scale.z)
+text.rotation.y = 360;
+text.position = [50,50,50];
+
+scene.add( text );
+render();
+
+} );
+
+var ambient = new THREE.AmbientLight( 0x555555 ); scene.add(ambient);
+
+var materialSphere01 = new THREE.MeshLambertMaterial({
+        color: 0x0000ff,
+        transparent: true,
+        opacity: 0.5
+    });
+
+clock = new THREE.Clock(false); 
+
+var cube100 = new THREE.CubeGeometry( 100, 100, 100 );
+var crateTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
+
+var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
+var cbmerch01 = new THREE.Mesh( cube100, crateMaterial );
+	cbmerch01.position.set(-200,-60,-331);
+	scene.add( cbmerch01 );
+
+///CUSTOM CARDBOARD BOX IMAGES////////////////////////////
+/* create an array with six textures for a cool cube
+	var materialArray = [];
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-1.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-6.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-2.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-5.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-3.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-4.png' ) }));
+	var DiceBlueMaterial = new THREE.MeshFaceMaterial(materialArray);
+	
+	var DiceBlueGeom = new THREE.CubeGeometry( 85, 85, 85, 1, 1, 1 );
+	var DiceBlue = new THREE.Mesh( DiceBlueGeom, DiceBlueMaterial );
+	DiceBlue.position.set(60, 50, -100);
+	scene.add( DiceBlue );	
+*/
+	// STAR//////////////
+	
+	var starPoints = [];
+	
+	starPoints.push( new THREE.Vector2 (   0,  50 ) );
+	starPoints.push( new THREE.Vector2 (  10,  10 ) );
+	starPoints.push( new THREE.Vector2 (  40,  10 ) );
+	starPoints.push( new THREE.Vector2 (  20, -10 ) );
+	starPoints.push( new THREE.Vector2 (  30, -50 ) );
+	starPoints.push( new THREE.Vector2 (   0, -20 ) );
+	starPoints.push( new THREE.Vector2 ( -30, -50 ) );
+	starPoints.push( new THREE.Vector2 ( -20, -10 ) );
+	starPoints.push( new THREE.Vector2 ( -40,  10 ) );
+	starPoints.push( new THREE.Vector2 ( -10,  10 ) );
+	
+	var starShape = new THREE.Shape( starPoints );
+
+	var extrusionSettings = {
+		size: 5, height: 2, curveSegments: 3,
+		bevelThickness: 1, bevelSize: 2, bevelEnabled: false,
+		material: 0, extrudeMaterial: 1
+	};
+	
+	var starGeometry = new THREE.ExtrudeGeometry( starShape, extrusionSettings );
+	
+var materialFront = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+var materialSide = new THREE.MeshBasicMaterial( { color: 0xff8800 } );
+	var materialArray = [ materialFront, materialSide ];
+	var starMaterial = new THREE.MeshFaceMaterial(materialArray);
+	
+var star = new THREE.Mesh( starGeometry, starMaterial );
+	//var wireframeTexture = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } ); 
+	//var star = new THREE.Mesh( starGeometry, wireframeTexture );
+	star.position.set(-202,60,-331);// 0 50 0
+	//star.rotation.set(90)
+	scene.add(star);
+
+// MERGING
+
+var blueMaterial = new THREE.MeshPhongMaterial({
+color: 0x0000FF
+});
+var redMaterial = new THREE.MeshPhongMaterial({
+color: 0xFF0000
+});
+
+var boxGeometry = new THREE.BoxGeometry(10, 10, 10);
+
+for (var face in boxGeometry.faces) {
+boxGeometry.faces[face].materialIndex = 0;
+}
+
+var sphereGeometry = new THREE.SphereGeometry(5, 16, 16);
+sphereGeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, 5, 0));
+
+var mergeGeometry = new THREE.Geometry();
+mergeGeometry.merge(boxGeometry, boxGeometry.matrix);
+mergeGeometry.merge(sphereGeometry, sphereGeometry.matrix, 1);
+
+var mesh = new THREE.Mesh(mergeGeometry, [blueMaterial, redMaterial]);
+mesh.position.set(-202,60,-331);
+scene.add(mesh);
+
+var material = new THREE.MeshNormalMaterial();
+
+var cubeGeometry = new THREE.CubeGeometry( 80, 80, 80 );
+var cube = new THREE.Mesh( mesh, material );
+cube.position.set(-200,-60,-331);
+//scene.add( cube );
+
+//ADD OUTLINE for loop OR direct function ?
+//purple
+var outlineMaterial2 = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } );
+var outlineMesh2 = new THREE.Mesh( cubeGeometry, outlineMaterial2 );
+	outlineMesh2.position = cube.position;
+	outlineMesh2.scale.multiplyScalar(0.25);
+	scene.add( outlineMesh2 );
+//white
+var outlineMaterial3 = new THREE.MeshBasicMaterial( { color: 0x860081, side: THREE.BackSide } );
+var outlineMesh3 = new THREE.Mesh( cubeGeometry, outlineMaterial3 );
+	outlineMesh3.position = cube.position;
+	outlineMesh3.scale.multiplyScalar(0.2);
+	scene.add( outlineMesh3 );
+
+//HEIGHTMAPS//////////////////////////////////////////////////////////////////////
+
+var heightmapImage = new Image();
+heightmapImage.src = mindataurl;
+
+var grassImage = new Image();
+grassImage.src = grassdataurl;
+
+var grassTexture = new THREE.ImageUtils.loadTexture(forestdataurl);//was grassdataurl
+
+// Remove a terrain
+//scene.remove(terrainScene);
+
+// Generate a terrain
+var xS = 63, yS = 63;
+
+terrainScene = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 2.5,
+heightmap: heightmapImage,
+//heightmap: customInfluences,
+material: new THREE.MeshBasicMaterial({map:grassTexture}),
+//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
+map: grassImage,
+maxHeight: 100,
+minHeight: -100,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+scene.add(terrainScene);
+
+//terrainPath//////////////////////////////////////////////////////
+var pathImage = new Image();
+pathImage.src = pathdataurl002;
+
+//debug with :: pathdataurl002 : sanddataurl
+var sandTexture = new THREE.ImageUtils.loadTexture(forestdataurl);// was sanddataurl
+
+var xS = 40, yS = 40;
+terrainPath = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 2.5,
+heightmap: pathImage,
+//heightmap: customInfluences,
+material: new THREE.MeshBasicMaterial({map:sandTexture}),
+//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
+//map: grassImage,
+maxHeight: 100,
+minHeight: -100,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+
+terrainPath.position.y += 5;
+scene.add(terrainPath);
+
+//terrainPath instance??? //////////////////////////////////////////////////////
+var pathImage = new Image();
+pathImage.src = pathdataurl002;
+
+//debug with :: pathdataurl002 : sanddataurl
+var sandTexture = new THREE.ImageUtils.loadTexture(sanddataurl);
+
+
+//LIGHT BLUE #798cb3 
+//CORAL #ff7f50
+var xS = 63, yS = 63;
+terrainPath = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 1.5,
+heightmap: pathImage,
+//heightmap: customInfluences,
+//material: new THREE.MeshBasicMaterial({map:sandTexture}),
+//light off blue
+material: new THREE.MeshBasicMaterial({color: 0x798cb3}),
+//map: grassImage,
+maxHeight: 100,
+minHeight: -105,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+
+terrainPath.position.y += 5;
+scene.add(terrainPath);
+
+//terrainDeck//////////////////////////////////////////////////////
+
+
+var deckImage = new Image();
+deckImage.src = "data:image/png;base64,"+deckdataurl003;
+
+//debug with :: deckdataurl : sanddataurl
+var deckTexture = new THREE.ImageUtils.loadTexture(forestdataurl);
+
+var xS = 63, yS = 63;
+terrainDeck = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 12.5,
+heightmap: deckImage,
+//heightmap: customInfluences,
+//material: new THREE.MeshBasicMaterial({map:deckTexture}),
+material: new THREE.MeshBasicMaterial({color: 0x52361b}),
+//map: grassImage,
+maxHeight: -15,
+minHeight: -112,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+
+terrainDeck.position.y += 11;
+
+//terrainDeck.geometry = new THREE.BoxBufferGeometry(100,100,1000).toNonIndexed();
+
+scene.add(terrainDeck);
+
+//CLIPPING DECK ///////////////////////////////////////////////
+
+//var localPlane = new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), 1 );
+//var globalPlane = new THREE.Plane( new THREE.Vector3( 0, 10, 0 ), 1 );
+// ??? //globalPlane.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+
+//renderer.clippingPlanes = [ globalPlane ];
+//renderer.localClippingEnabled = true;
+
+/*
+var material = new THREE.MeshNormalMaterial( {
+clippingPlanes: [ localPlane ],
+//clipShadows: true
+} );
+*/
+
+/////////////////////////////////////////////////////////
+//INTERESTING RAMP GEOMETRY
+/*
+var xS = 63, yS = 1;
+terrainDeck = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 2.5,
+heightmap: deckImage,
+//heightmap: customInfluences,
+material: new THREE.MeshBasicMaterial({map:deckTexture}),
+//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
+//map: grassImage,
+maxHeight: 50,
+minHeight: -100,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+*/
+//////////////////////////////////////////////////////////////////
+// Optional:
+// Get the geometry of the terrain across which you want to scatter meshes
+var geo = terrainScene.children[0].geometry;
+// Add randomly distributed foliage
+decoScene = THREE.Terrain.ScatterMeshes(geo, {
+mesh: new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 12, 6)),
+w: xS,
+h: yS,
+spread: 0.02,
+randomness: Math.random,
+});
+
+//terrainScene.add(decoScene);
+
+
+// ADD BOXES AS LADDER ////////////////////////////////////////////////////////////////
+var boxGeometry = new THREE.BoxBufferGeometry( 20, 20, 200 ).toNonIndexed();
+
+position = boxGeometry.attributes.position;
+
+for ( let i = 0; i < 20; i ++ ) {
+
+	const box = new THREE.Mesh( boxGeometry );
+	box.position.x = 400 + Math.floor( Math.random() * 10 - 10 ) * 10;
+	box.position.y = -100 + Math.floor( Math.random() * 10 ) * 10 + 10;
+	//box.position.z = -200 + Math.floor( Math.random() * 10 - 10 ) * 10;
+
+	scene.add( box );
+	objects.push( box );
+
+}
+
+// DECK TEST //////////////////////////////////////////////////////////////
+var geometry = new THREE.BoxBufferGeometry(100, 30, 500).toNonIndexed();
+//var pos = geometry.attributes.position;
+var material = new THREE.MeshBasicMaterial({color: 0x860081});
+var cube = new THREE.Mesh(geometry, material);
+
+cube.position.x =250;
+cube.position.y =-20;
+cube.position.z =0;
+
+scene.add(cube);
+objects.push( cube );
+
+////////////////////////////////////////////////////////////////
+
+instructions.addEventListener('click', function() {
+
+        controls.lock();
+
+    }, false);
+
+
+    controls = new THREE.PointerLockControls(camera, renderer.domElement);
+    controls.addEventListener('lock', function() {
+
+        instructions.style.display = 'none';
+        blocker.style.display = 'none';
+
+    });
+
+    controls.addEventListener('unlock', function() {
+
+        blocker.style.display = 'block'; //block
+        instructions.style.display = ''; //""
+
+    });
+
+    scene.add(controls.getObject());
+
+    var onKeyDown = function(event) {
+
+        switch (event.keyCode) {
+
+            case 38: // up
+            case 87: // w
+                moveForward = true;
+                break;
+
+            case 37: // left
+            case 65: // a
+                moveLeft = true;
+                break;
+
+            case 40: // down
+            case 83: // s
+                moveBackward = true;
+                break;
+
+            case 39: // right
+            case 68: // d
+                moveRight = true;
+                break;
+
+	    case 46:// c
+	    case 45:// x
+	    case 44:// z
+            case 32: // space
+                if (canJump === true) velocity.y += 450;
+                canJump = false;
+                break;
+
+        }
+
+    };
+
+    var onKeyUp = function(event) {
+
+        switch (event.keyCode) {
+
+            case 38: // up
+            case 87: // w
+                moveForward = false;
+                break;
+
+            case 37: // left
+            case 65: // a
+                moveLeft = false;
+                break;
+
+            case 40: // down
+            case 83: // s
+                moveBackward = false;
+                break;
+
+            case 39: // right
+            case 68: // d
+                moveRight = false;
+                break;
+
+        }
+
+    };
+	document.addEventListener('keydown', onKeyDown, false);
+    	document.addEventListener('keyup', onKeyUp, false);
+
+    raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+
+/*           
+    //////////////////////////BOXES//////////////////////////
+    let floorGeometry = new THREE.PlaneBufferGeometry( 1000, 1000, 0, 0 );
+			floorGeometry.rotateX( - Math.PI / 2 );
+
+			// vertex displacement
+
+			let position = floorGeometry.attributes.position;
+
+			for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+				vertex.fromBufferAttribute( position, i );
+
+				vertex.x += Math.random() * 20 - 10;
+				vertex.y += Math.random() * 2;
+				vertex.z += Math.random() * 20 - 10;
+
+				position.setXYZ( i, vertex.x, vertex.y, vertex.z );
+
+			}
+
+			floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
+
+			position = floorGeometry.attributes.position;
+			const colorsFloor = [];
+
+			for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+				color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+				colorsFloor.push( color.r, color.g, color.b );
+
+			}
+
+			//floorGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsFloor, 3 ) );
+
+			const floorMaterial = new THREE.MeshBasicMaterial( { vertexColors: true } );
+
+			const floor = new THREE.Mesh( floorGeometry, floorMaterial );
+			//scene.add( floor );
+
+			// objects
+
+			const boxGeometry = new THREE.BoxBufferGeometry( 20, 20, 20 ).toNonIndexed();
+
+			position = boxGeometry.attributes.position;
+			const colorsBox = [];
+
+			for ( let i = 0, l = position.count; i < l; i ++ ) {
+
+				color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+				colorsBox.push( color.r, color.g, color.b );
+
+			}
+
+			//boxGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsBox, 3 ) );
+
+			for ( let i = 0; i < 100; i ++ ) {
+
+				const boxMaterial = new THREE.MeshPhongMaterial( { specular: 0xffffff, flatShading: true, vertexColors: true } );
+				boxMaterial.color.setHSL( Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+
+				const box = new THREE.Mesh( boxGeometry, boxMaterial );
+				box.position.x = Math.floor( Math.random() * 20 - 10 ) * 20;
+				box.position.y = Math.floor( Math.random() * 20 ) * 20 + 10;
+				box.position.z = Math.floor( Math.random() * 20 - 10 ) * 20;
+
+				//scene.add( box );
+				objects.push( box );    
+				}     
+    */
+//FLIP MESH///////////////////////////////////////
+
+var geo = terrainScene.children[0].geometry;
+var crate = new THREE.Mesh( geo.clone());
+
+flipMesh(crate);
+
+// Add Terrain//////////////////////////////////////
+
+render();
+}//END OF setupThreeJS
+
+function flipMesh(object3D) {
+
+object3D.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+reverseWindingOrder(object3D);
+}
+
+function reverseWindingOrder(object3D) {
+
+// TODO: Something is missing, the objects are flipped alright but the light reflection on them is somehow broken
+
+if (object3D.type === "Mesh") {
+
+var geometry = object3D.geometry;
+
+for (var i = 0, l = geometry.faces.length; i < l; i++) {
+
+    var face = geometry.faces[i];
+    var temp = face.a;
+    face.a = face.c;
+    face.c = temp;
+
+}
+
+var faceVertexUvs = geometry.faceVertexUvs[0];
+for (i = 0, l = faceVertexUvs.length; i < l; i++) {
+
+    var vector2 = faceVertexUvs[i][0];
+    faceVertexUvs[i][0] = faceVertexUvs[i][2];
+    faceVertexUvs[i][2] = vector2;
+}
+
+geometry.computeFaceNormals();
+geometry.computeVertexNormals();
+}
+
+if (object3D.children) {
+
+for (var j = 0, jl = object3D.children.length; j < jl; j++) {
+
+    reverseWindingOrder(object3D.children[j]);
+}
+}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+//water = new THREE.Mesh(
+new THREE.PlaneBufferGeometry(16384+1024, 16384+1024, 16, 16),
+//new THREE.MeshLambertMaterial({color: 0x0055ff, transparent: false, opacity: 0.6});
+//water.position.y = -99;
+//water.rotation.x = -0.5 * Math.PI;
+//scene.add(water);
+//} 
+
+animate();
+
+function render() {
+    requestAnimationFrame(render);
+    //controls.update();
+    //scene.add(controls.getObject());
+    renderer.render(scene, camera);
+}
+function hideVideo(){
+
+var video = document.getElementById('v')
+var overlay = document.getElementById('overlay')
+video.style.display = 'none';
+overlay.style.display = 'none';
+}
+
+</script>
+</head>
+
+<body onload="setup();">
+
+  <video id="v" autoplay loop style="width: 100%;height: 800px">
+    <source id='mp4'
+    src="./videos/TMGW_INTRO.mp4"
+    type='video/mp4'>
+    <source id='webm'
+    src="./videos/TMGW_INTRO.webm"
+    type='video/webm'>
+    <source id='ogv'
+    src="./videos/TMGW_INTRO.ogv"
+    type='video/ogg'>
+    <p>Your user agent does not support the HTML5 Video element.</p>
+  </video>
+  <div id="overlay" onClick="hideVideo();" style="font-size:26px;color:#777!important;cursor:pointer;text-decoration: underline;"> :: Are we rolling? ::</div>
+
+<div id="scenes">
+<div id="blocker" style="display: block;">
+<div id="instructions" style="text-align: center;">
+<span id="play" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Play :: </span>
+
+<span id="playfullscreen" onClick="openFullscreen();" style="font-size:36px;color:lightblue!important;cursor:pointer;text-decoration: underline;">:: Fullscreen :: </span>
+<br><div style="color:#777!important;"> Move: WASD :: Jump: SPACE :: Look: MOUSE <br> ( Hit F5/reload page to fix load error..doh!)
+
+</div>
+</div>
+</div>
+<!-- video intro information :: <canvas id="id-webglcanvas"  style="width: 1280px; height: 431px;" width="1280" height="431"></canvas>
+
+<div> 
+<span id="learn" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Learn :: </span>
+
+<span id="learnfullscreen" style="font-size:36px;color:LIGHTBLUE;cursor:pointer;text-decoration: underline;">:: Learn :: </span>
+<canvas style="width: 1280px; height: 431px;" width="1280"
+</div>
+
+<div> 
+<span id="action" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Action:: </span>
+
+<span id="actionfullscreen" style="font-size:36px;color:LIGHTBLUE;cursor:pointer;text-decoration: underline;">:: Action :: </span>
+<canvas style="width: 1280px; height: 431px;" width="1280"
+</div>
+-->
+</body>
+
+</html>
