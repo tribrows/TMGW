@@ -179,7 +179,7 @@ function setupThreeJS() {
 scene = new THREE.Scene();
 scene.background = new THREE.Color(0x555555);
 //purple fog
-scene.fog = new THREE.FogExp2(0x860081, 0.0009);
+scene.fog = new THREE.FogExp2(0x860081, 0.003);
 
 /*
 water = new THREE.Mesh(
@@ -206,9 +206,9 @@ var imagePrefix = "images/bg04";
 	var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
 	var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
 	scene.add( skyBox );
-/*var light = new THREE.PointLight(0xffffff);
+var light = new THREE.PointLight(0xffffff);
 	light.position.set(0,250,0);
-	scene.add(light);*/
+	scene.add(light);
 
 
 renderer = new THREE.WebGLRenderer({ antialias: true });
