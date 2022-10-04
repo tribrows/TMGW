@@ -163,6 +163,15 @@ renderer = new THREE.WebGLRenderer({
 aspr = 1.0;
 camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
 
+
+  const textureLoader = new THREE.TextureLoader();
+  const texture = textureLoader.load(
+    './images/bg01.png',
+    () => {
+      const rt = new THREE.WebGLCubeRenderTarget(texture.image.height);
+      rt.fromEquirectangularTexture(renderer, texture);
+      scene.background = rt.texture;
+    });
 function setup() {
 
 //init();
