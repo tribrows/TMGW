@@ -8,6 +8,9 @@
 <script src="./js/CanvasRenderer.js"></script>
 <script src="./js/Projector.js"></script>
 <script src="./js/THREE.Terrain.min.js"></script>
+<!--<script src="./js/threejs/shaders/VignetteShader.js"></script>
+
+<script src="https://unpkg.com/three@0.91.0/examples/js/shaders/VignetteShader.js"></script> -->
 
 <!--THREE JS version 91-->
 <script async src="./js/GLTFLoader.js"></script>
@@ -53,8 +56,12 @@
   z-index: 100;
 }
 
-#v {
+#video {
   z-index: 1;
+
+canvas {
+  filter: grayscale(60%);
+}
 }
 </style>
 
@@ -169,7 +176,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 aspr = 1.0;
 camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
 
-camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
+//camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
 
 
 var imagePrefix = "./images/bg04";
@@ -197,7 +204,7 @@ camera.position.set(250,10,26);
 camera.lookAt(new THREE.Vector3(-250, -150, -2550));
 scene.add(camera);
 
-//START CAMERA SHAKE & ANIMATION
+//START CAMERA SHAKE & ANIMATION///////////////////////////
 camera.lookAt(new THREE.Vector3(-250, -150, -2550));
 
 
@@ -208,7 +215,46 @@ function onMouseDown(event){
 //Scroll Options//Inventory
 //Left Mouse Fire
 //Right Mouse Jump
+
+
+//VIGNETTE OVERLAY///////////////////////////////////////
+/*
+const shaderVignette = VignetteShader;
+const effectVignette = new ShaderPass( shaderVignette );
+effectVignette.uniforms[ 'offset' ].value = 0.95;
+effectVignette.uniforms[ 'darkness' ].value = 1.6;
+
+const rtParameters = {stencilBuffer: true};
+const rtWidth = width / 2;
+const rtHeight = height / 2;
+*/
+
+//PERFORMANCE :: RENDER ORDER & CULL SCENE FRONT TO BACK
+/* 
+const renderBackground = new RenderPass( sceneBG, cameraOrtho );
+const renderModel = new RenderPass( sceneModel, cameraPerspective );
+renderModel.clear = false;
+
+composerScene = new EffectComposer( renderer, new THREE.WebGLRenderTarget( rtWidth * 2, rtHeight * 2, rtParameters ) );
+
+composerScene.addPass( renderBackground );
+composerScene.addPass( renderModel );
+composerScene.addPass( renderMaskInverse );
+composerScene.addPass( effectHBlur );
+composerScene.addPass( effectVBlur );
+composerScene.addPass( clearMask );
+
+renderScene = new TexturePass( composerScene.renderTarget2.texture );
+*/
+
+/*
+composer = new EffectComposer( renderer, new THREE.WebGLRenderTarget( rtWidth, rtHeight, rtParameters ) );
+
+composer.addPass( effectVignette );
+*/
+
 }
+
 function setup() {
 
 //init();
@@ -251,6 +297,7 @@ scene.add( rolling );
 render();
 } );
 
+/*
 var loader2 = new THREE.GLTFLoader();
 loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
 
@@ -258,20 +305,33 @@ var logo = gltf.scene;
 logo.scale.set(50*logo.scale.x,50*logo.scale.y,50*logo.scale.z)
 logo.rotation.y = 360;
 logo.position = [-50,-50,-50];
-
 scene.add( logo );
 render();
 } );
+*/
 
 //ADD :: feather particles
-
+/*
 var loader3 = new THREE.GLTFLoader();
 loader3.load( './models/tmgw_text_pillowfight.glb', function ( gltf ) {
 
 var text = gltf.scene;
-text.scale.set(50*text.scale.x, 50*text.scale.y, 50 * text.scale.z)
+text.scale.set(50*text.scale.x,50*text.scale.y,50*text.scale.z)
 text.rotation.y = 360;
 text.position = [50,50,50];
+scene.add( text );
+render();
+} );
+*/
+
+//SCENE :: KITCHEN/////////////////////////////////////////////////
+var loader4 = new THREE.GLTFLoader();
+loader4.load( './models/kitchen/kitchen02.gltf', function ( gltf ) {
+
+var kitchen = gltf.scene;
+kitchen.scale.set(50*kitchen.scale.x, 50*kitchen.scale.y, 50 * kitchen.scale.z)
+kitchen.rotation.y = 180;
+kitchen.position = [0,0,0];
 
 scene.add( text );
 render();
@@ -287,14 +347,6 @@ var materialSphere01 = new THREE.MeshLambertMaterial({
     });
 
 clock = new THREE.Clock(false); 
-
-var cube100 = new THREE.CubeGeometry( 100, 100, 100 );
-var crateTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
-
-var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-var cbmerch01 = new THREE.Mesh( cube100, crateMaterial );
-	cbmerch01.position.set(-200,-60,-331);
-	scene.add( cbmerch01 );
 
 ///CUSTOM CARDBOARD BOX IMAGES////////////////////////////
 /* create an array with six textures for a cool cube
@@ -313,7 +365,7 @@ var cbmerch01 = new THREE.Mesh( cube100, crateMaterial );
 	scene.add( DiceBlue );	
 */
 	// STAR//////////////
-	
+/*	
 	var starPoints = [];
 	
 	starPoints.push( new THREE.Vector2 (   0,  50 ) );
@@ -348,9 +400,9 @@ var star = new THREE.Mesh( starGeometry, starMaterial );
 	star.position.set(-202,60,-331);// 0 50 0
 	//star.rotation.set(90)
 	scene.add(star);
-
+*/
 // MERGING
-
+/*
 var blueMaterial = new THREE.MeshPhongMaterial({
 color: 0x0000FF
 });
@@ -374,25 +426,36 @@ mergeGeometry.merge(sphereGeometry, sphereGeometry.matrix, 1);
 var mesh = new THREE.Mesh(mergeGeometry, [blueMaterial, redMaterial]);
 mesh.position.set(-202,60,-331);
 scene.add(mesh);
+*/
 
-var material = new THREE.MeshNormalMaterial();
+//OUTLINE BOX//////////////////////////////////////////
+//ADD TO NEXT SCENE TRIGGERS///////////////////////////
 
-var cubeGeometry = new THREE.CubeGeometry( 80, 80, 80 );
-var cube = new THREE.Mesh( mesh, material );
-cube.position.set(-200,-60,-331);
+var cube100 = new THREE.CubeGeometry( 100, 100, 100 );
+var cbTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
+
+var cbMaterial = new THREE.MeshBasicMaterial( { map: cbTexture } );
+var cbmerch01 = new THREE.Mesh( cube100, cbMaterial );
+	cbmerch01.position.set(-200,-60,-331);
+	scene.add( cbmerch01 );
+
+//var cubeMaterial = new THREE.MeshNormalMaterial();
+//var cubeGeometry = new THREE.CubeGeometry( 80, 80, 80 );
+//var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
+//cube.position.set(-200,-60,-331);
 //scene.add( cube );
 
-//ADD OUTLINE for loop OR direct function ?
+//ADD OUTLINE for loop OR direct function ?///////////////
 //purple
 var outlineMaterial2 = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } );
-var outlineMesh2 = new THREE.Mesh( cubeGeometry, outlineMaterial2 );
-	outlineMesh2.position = cube.position;
+var outlineMesh2 = new THREE.Mesh( cbmerch01, outlineMaterial2 );
+	outlineMesh2.position = cube100.position;
 	outlineMesh2.scale.multiplyScalar(0.25);
 	scene.add( outlineMesh2 );
 //white
 var outlineMaterial3 = new THREE.MeshBasicMaterial( { color: 0x860081, side: THREE.BackSide } );
-var outlineMesh3 = new THREE.Mesh( cubeGeometry, outlineMaterial3 );
-	outlineMesh3.position = cube.position;
+var outlineMesh3 = new THREE.Mesh( cbmerch01, outlineMaterial3 );
+	outlineMesh3.position = cube100.position;
 	outlineMesh3.scale.multiplyScalar(0.2);
 	scene.add( outlineMesh3 );
 
@@ -833,7 +896,6 @@ for (var j = 0, jl = object3D.children.length; j < jl; j++) {
 }
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 //water = new THREE.Mesh(
@@ -847,11 +909,21 @@ new THREE.PlaneBufferGeometry(16384+1024, 16384+1024, 16, 16),
 animate();
 
 function render() {
-    requestAnimationFrame(render);
+   	
     //controls.update();
     //scene.add(controls.getObject());
-    renderer.render(scene, camera);
+	
+	requestAnimationFrame(render);
+   	renderer.render(scene, camera);
+	//renderer.setViewport( 0, 0, halfWidth, halfHeight );
+	//composer.render( delta );
 }
+
+/*if ( shaderActive == "none" )
+		renderer.render( scene, camera );
+	else
+		composer.render();*/
+
 function hideVideo(){
 
 var video = document.getElementById('v')
@@ -865,7 +937,7 @@ overlay.style.display = 'none';
 
 <body onload="setup();">
 
-  <video id="v" autoplay loop style="width: 100%;height: 800px">
+  <video id="video" autoplay loop style="width: 100%;height: 800px">
     <source id='mp4'
     src="./videos/TMGW_INTRO.mp4"
     type='video/mp4'>
@@ -890,7 +962,6 @@ overlay.style.display = 'none';
 </div>
 </div>
 </div>
-
 
 <!-- video intro information ::
 
