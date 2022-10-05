@@ -71,7 +71,7 @@ if (canJump === true) velocity.y += 450;
 */
 
 function openFullscreen() {
-      //var elem = document.getElementById("id-webglcanvas");
+      //var canvas = document.getElementById("playcanvas");
       var elem = document.getElementsByTagName("canvas")[0];
 
 	//blocker.style.display = 'block'; //block
@@ -133,9 +133,6 @@ function animate() {
         prevTime = time;
     }}
     
-var blocker = document.getElementById('blocker');
-var instructions = document.getElementById('instructions');
-
 var objects = [];
 var raycaster;
 var moveForward = false;
@@ -153,49 +150,32 @@ var color = new THREE.Color();
 var VRButton = "";
 var controls = "";
 
-var camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water;
-
-
-scene = new THREE.Scene();
-renderer = new THREE.WebGLRenderer({
-            //antialias: true
-        });
-aspr = 1.0;
-camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
-
-
-function setup() {
-
-//init();
-render();
-setupThreeJS();
-//setupWorld();
-
-}
-
-//SETUP THREEJS
-function setupThreeJS() {
+var playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water;
 
 scene = new THREE.Scene();
 scene.background = new THREE.Color(0x555555);
 //purple fog
 scene.fog = new THREE.FogExp2(0x860081, 0.003);
 
-/*
-water = new THREE.Mesh(
-new THREE.PlaneBufferGeometry(16384+1024, 16384+1024, 16, 16),
-new THREE.MeshLambertMaterial({color: 0x0055ff, transparent: true, opacity: 0.6})
-);
-water.position.y = -99;
-water.rotation.x = -0.5 * Math.PI;
+renderer = new THREE.WebGLRenderer({
+            //antialias: true
+        });
 
-scene.add(water);
-*/
+//playcanvas = document.getElementById('playcanvas')
+//renderer = new THREE.WebGLRenderer( { canvas: playcanvas } );
 
-var imagePrefix = "images/bg04";
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+aspr = 1.0;
+camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
+
+camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
+
+
+var imagePrefix = "./images/bg04";
 	var directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
 	var imageSuffix = ".png";
-	var skyGeometry = new THREE.CubeGeometry( 5000, 5000, 5000 );	
+	var skyGeometry = new THREE.CubeGeometry( 800, 800, 800 );	
 	
 	var materialArray = [];
 	for (var i = 0; i < 6; i++)
@@ -211,15 +191,6 @@ var light = new THREE.PointLight(0xffffff);
 	scene.add(light);
 
 
-renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-
-var blocker = document.getElementById('blocker');
-var instructions = document.getElementById('instructions');
-document.getElementById('scenes').appendChild(renderer.domElement);
-//renderer.domElement.setAttribute('tabindex', -1);
-
-camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
 
 //PLAYER START POSITION
 camera.position.set(250,10,26);
@@ -228,6 +199,41 @@ scene.add(camera);
 
 //START CAMERA SHAKE & ANIMATION
 camera.lookAt(new THREE.Vector3(-250, -150, -2550));
+
+
+document.addEventListener('mousedown', onMouseDown, false);
+
+function onMouseDown(event){
+   console.log("Scroll, Fire or Jump");
+//Scroll Options//Inventory
+//Left Mouse Fire
+//Right Mouse Jump
+}
+function setup() {
+
+//init();
+//render();
+setupThreeJS();
+//setupWorld();
+
+}
+
+//SETUP THREEJS
+function setupThreeJS() {
+
+document.getElementById('scenes').appendChild(renderer.domElement);
+//renderer.domElement.setAttribute('tabindex', -1);
+
+/*
+water = new THREE.Mesh(
+new THREE.PlaneBufferGeometry(16384+1024, 16384+1024, 16, 16),
+new THREE.MeshLambertMaterial({color: 0x0055ff, transparent: true, opacity: 0.6})
+);
+water.position.y = -99;
+water.rotation.x = -0.5 * Math.PI;
+
+scene.add(water);
+*/
 
 
 //GLTF LOADERS
@@ -606,6 +612,8 @@ scene.add(cube);
 objects.push( cube );
 
 ////////////////////////////////////////////////////////////////
+var blocker = document.getElementById('blocker');
+var instructions = document.getElementById('instructions');
 
 instructions.addEventListener('click', function() {
 
@@ -878,11 +886,13 @@ overlay.style.display = 'none';
 
 <span id="playfullscreen" onClick="openFullscreen();" style="font-size:36px;color:lightblue!important;cursor:pointer;text-decoration: underline;">:: Fullscreen :: </span>
 <br><div style="color:#777!important;"> Move: WASD :: Jump: SPACE :: Look: MOUSE <br> ( Hit F5/reload page to fix load error..doh!)
+<!--<canvas id="playcanvas"  style="width: 1280px; height: 431px;" width="1280" height="431"></canvas>-->
+</div>
+</div>
+</div>
 
-</div>
-</div>
-</div>
-<!-- video intro information :: <canvas id="id-webglcanvas"  style="width: 1280px; height: 431px;" width="1280" height="431"></canvas>
+
+<!-- video intro information ::
 
 <div> 
 <span id="learn" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Learn :: </span>
