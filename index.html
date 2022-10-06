@@ -361,11 +361,11 @@ cube.position.set(-200,-60,-331);
 //OUTLINES////////////////////////////////////////////////
 //ADD OUTLINE for loop OR direct function ?
 
-var cube100 = new THREE.CubeGeometry( 100, 100, 100 );
-var crateTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
+var cbBox = new THREE.CubeGeometry( 300, 300, 300 );
+var cbTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
 
-var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-var cbmerch01 = new THREE.Mesh( cube100, crateMaterial );
+var cbMaterial = new THREE.MeshBasicMaterial( { map: cbTexture } );
+var cbmerch01 = new THREE.Mesh( cbBox, cbMaterial );
 	cbmerch01.position.set(-200,-60,-331);
 	scene.add( cbmerch01 );
 //purple
