@@ -585,7 +585,7 @@ randomness: Math.random,
 
 
 // ADD BOXES AS LADDER ////////////////////////////////////////////////////////////////
-var boxGeometry = new THREE.BoxBufferGeometry( 20, 20, 200 ).toNonIndexed();
+/* var boxGeometry = new THREE.BoxBufferGeometry( 20, 20, 200 ).toNonIndexed();
 
 position = boxGeometry.attributes.position;
 
@@ -599,7 +599,7 @@ for ( let i = 0; i < 20; i ++ ) {
 	scene.add( box );
 	objects.push( box );
 
-}
+} */
 
 // DECK TEST //////////////////////////////////////////////////////////////
 var geometry = new THREE.BoxBufferGeometry(100, 30, 500).toNonIndexed();
@@ -614,6 +614,7 @@ cube.position.z =0;
 scene.add(cube);
 objects.push( cube );
 
+//CLONE & REPOSITION
 ////////////////////////////////////////////////////////////////
 var blocker = document.getElementById('blocker');
 var instructions = document.getElementById('instructions');
