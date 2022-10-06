@@ -251,20 +251,20 @@ scene.add( rolling );
 render();
 } );
 
+/*
 var loader2 = new THREE.GLTFLoader();
 loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
-
 var logo = gltf.scene;
 logo.scale.set(50*logo.scale.x,50*logo.scale.y,50*logo.scale.z)
 logo.rotation.y = 360;
 logo.position = [-50,-50,-50];
-
 scene.add( logo );
 render();
 } );
+*/
 
 //ADD :: feather particles
-
+/*
 var loader3 = new THREE.GLTFLoader();
 loader3.load( './models/tmgw_text_pillowfight.glb', function ( gltf ) {
 
@@ -272,14 +272,11 @@ var text = gltf.scene;
 text.scale.set(50*text.scale.x, 50*text.scale.y, 50 * text.scale.z)
 text.rotation.y = 360;
 text.position = [50,50,50];
-
 scene.add( text );
 render();
-
 } );
-
+*/
 var ambient = new THREE.AmbientLight( 0x555555 ); scene.add(ambient);
-
 var materialSphere01 = new THREE.MeshLambertMaterial({
         color: 0x0000ff,
         transparent: true,
@@ -288,30 +285,6 @@ var materialSphere01 = new THREE.MeshLambertMaterial({
 
 clock = new THREE.Clock(false); 
 
-var cube100 = new THREE.CubeGeometry( 100, 100, 100 );
-var crateTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
-
-var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-var cbmerch01 = new THREE.Mesh( cube100, crateMaterial );
-	cbmerch01.position.set(-200,-60,-331);
-	scene.add( cbmerch01 );
-
-///CUSTOM CARDBOARD BOX IMAGES////////////////////////////
-/* create an array with six textures for a cool cube
-	var materialArray = [];
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-1.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-6.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-2.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-5.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-3.png' ) }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-4.png' ) }));
-	var DiceBlueMaterial = new THREE.MeshFaceMaterial(materialArray);
-	
-	var DiceBlueGeom = new THREE.CubeGeometry( 85, 85, 85, 1, 1, 1 );
-	var DiceBlue = new THREE.Mesh( DiceBlueGeom, DiceBlueMaterial );
-	DiceBlue.position.set(60, 50, -100);
-	scene.add( DiceBlue );	
-*/
 	// STAR//////////////
 	
 /*	var starPoints = [];
@@ -385,16 +358,41 @@ cube.position.set(-200,-60,-331);
 //scene.add( cube );
 
 */
-
 //OUTLINES////////////////////////////////////////////////
 //ADD OUTLINE for loop OR direct function ?
+
+var cube100 = new THREE.CubeGeometry( 100, 100, 100 );
+var crateTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
+
+var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
+var cbmerch01 = new THREE.Mesh( cube100, crateMaterial );
+	cbmerch01.position.set(-200,-60,-331);
+	scene.add( cbmerch01 );
 //purple
 /*var outlineMaterial2 = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } );
 var outlineMesh2 = new THREE.Mesh( cubeGeometry, outlineMaterial2 );
 	outlineMesh2.position = cube.position;
 	outlineMesh2.scale.multiplyScalar(0.25);
 	scene.add( outlineMesh2 );
+*/
+///CUSTOM CARDBOARD BOX IMAGES////////////////////////////
+/* create an array with six textures for a cool cube
+	var materialArray = [];
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-1.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-6.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-2.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-5.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-3.png' ) }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-4.png' ) }));
+	var DiceBlueMaterial = new THREE.MeshFaceMaterial(materialArray);
+	
+	var DiceBlueGeom = new THREE.CubeGeometry( 85, 85, 85, 1, 1, 1 );
+	var DiceBlue = new THREE.Mesh( DiceBlueGeom, DiceBlueMaterial );
+	DiceBlue.position.set(60, 50, -100);
+	scene.add( DiceBlue );	
+*/
 //white
+/*
 var outlineMaterial3 = new THREE.MeshBasicMaterial( { color: 0x860081, side: THREE.BackSide } );
 var outlineMesh3 = new THREE.Mesh( cubeGeometry, outlineMaterial3 );
 	outlineMesh3.position = cube.position;
