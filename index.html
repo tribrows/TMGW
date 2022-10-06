@@ -630,6 +630,7 @@ var geometry = new THREE.BoxBufferGeometry(100, 30, 500).toNonIndexed();
 var material = new THREE.MeshBasicMaterial({color: 0x860081});
 var cube = new THREE.Mesh(geometry, material);
 
+var geometry02 = new THREE.BoxBufferGeometry(100, 30, 3500).toNonIndexed(); var material = new THREE.MeshBasicMaterial({color: 0x860081}); var cube = new THREE.Mesh(geometry02, material); cube.position.set(50,-20,0); cube.rotation.set(0,100,0); scene.add(cube); objects.push( cube );
 cube.position.x =250;
 cube.position.y =-20;
 cube.position.z =0;
