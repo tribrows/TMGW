@@ -238,7 +238,7 @@ scene.add(water);
 
 //GLTF LOADERS
 // FIX :: textures & compress
-
+/*
 var loader = new THREE.GLTFLoader();
 loader.load( './models/arewerolling_jump.glb', function ( gltf ) {
 
@@ -250,7 +250,7 @@ rolling.position = [40,40,40];
 scene.add( rolling );
 render();
 } );
-
+*/
 /*
 var loader2 = new THREE.GLTFLoader();
 loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
@@ -276,6 +276,18 @@ scene.add( text );
 render();
 } );
 */
+
+var loader4 = new THREE.GLTFLoader();
+loader4.load( './models/kitchen/kitchen02.gltf', function ( gltf ) {
+
+var kitchen = gltf.scene;
+kitchen.scale.set(50*text.scale.x, 50*text.scale.y, 50 * text.scale.z)
+kitchen.rotation.y = 360;
+kitcen.position = [50,50,50];
+scene.add( text );
+render();
+} );
+
 var ambient = new THREE.AmbientLight( 0x555555 ); scene.add(ambient);
 var materialSphere01 = new THREE.MeshLambertMaterial({
         color: 0x0000ff,
@@ -363,18 +375,28 @@ cube.position.set(-200,-60,-331);
 
 var cbBox = new THREE.CubeGeometry( 300, 300, 300 );
 var cbTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
-
 var cbMaterial = new THREE.MeshBasicMaterial( { map: cbTexture } );
-var cbmerch01 = new THREE.Mesh( cbBox, cbMaterial );
-	cbmerch01.position.set(-200,-60,-331);
-	scene.add( cbmerch01 );
+var cbMerch01 = new THREE.Mesh( cbBox, cbMaterial );
+	cbMerch01.position.set(-200,-60,-331);
+	scene.add( cbMerch01 );
+
 //purple
-/*var outlineMaterial2 = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } );
-var outlineMesh2 = new THREE.Mesh( cubeGeometry, outlineMaterial2 );
-	outlineMesh2.position = cube.position;
-	outlineMesh2.scale.multiplyScalar(0.25);
-	scene.add( outlineMesh2 );
+/*
+var outlineMaterial2 = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } );
+var outlineMesh2 = new THREE.Mesh( cbBox, outlineMaterial2 );
+	outlineMesh2.position = cbMerch01.position;
+	outlineMesh2.scale.multiplyScalar(1.02);
+	*/
+//white
+/*
+var outlineMaterial3 = new THREE.MeshBasicMaterial( { color: 0x860081, side: THREE.BackSide } );
+var outlineMesh3 = new THREE.Mesh( cbBox, outlineMaterial3 );
+	outlineMesh3.position = cbMerch01.position;
+	outlineMesh3.scale.multiplyScalar(1.01);
+	scene.add( cbMerch01, outlineMesh3 , outlineMesh2);
 */
+//note:: GROUP "add" & SET THE DRAW ORDER !!! RENDER ERROR SOLUTION???
+
 ///CUSTOM CARDBOARD BOX IMAGES////////////////////////////
 /* create an array with six textures for a cool cube
 	var materialArray = [];
@@ -391,14 +413,7 @@ var outlineMesh2 = new THREE.Mesh( cubeGeometry, outlineMaterial2 );
 	DiceBlue.position.set(60, 50, -100);
 	scene.add( DiceBlue );	
 */
-//white
-/*
-var outlineMaterial3 = new THREE.MeshBasicMaterial( { color: 0x860081, side: THREE.BackSide } );
-var outlineMesh3 = new THREE.Mesh( cubeGeometry, outlineMaterial3 );
-	outlineMesh3.position = cube.position;
-	outlineMesh3.scale.multiplyScalar(0.2);
-	scene.add( outlineMesh3 );
-*/
+
 //HEIGHTMAPS//////////////////////////////////////////////////////////////////////
 
 var heightmapImage = new Image();
