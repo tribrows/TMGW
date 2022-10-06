@@ -8,6 +8,7 @@
 <script src="./js/CanvasRenderer.js"></script>
 <script src="./js/Projector.js"></script>
 <script src="./js/THREE.Terrain.min.js"></script>
+<script src="./js/VignetteShader.js"></script>
 
 <!--THREE JS version 91-->
 <script async src="./js/GLTFLoader.js"></script>
@@ -281,7 +282,8 @@ var loader4 = new THREE.GLTFLoader();
 loader4.load( './models/kitchen/kitchen02.gltf', function ( gltf ) {
 
 var kitchen = gltf.scene;
-kitchen.scale.set(50*text.scale.x, 50*text.scale.y, 50 * text.scale.z)
+kitchen.scale.set(50*kitchen.scale.x, 50*kitchen.scale.y, 50*kitchen.scale.z)
+
 kitchen.rotation.y = 360;
 kitcen.position = [50,50,50];
 scene.add( text );
@@ -373,7 +375,7 @@ cube.position.set(-200,-60,-331);
 //OUTLINES////////////////////////////////////////////////
 //ADD OUTLINE for loop OR direct function ?
 
-var cbBox = new THREE.CubeGeometry( 300, 300, 300 );
+var cbBox = new THREE.CubeGeometry( 600, 600, 600 );
 var cbTexture = new THREE.ImageUtils.loadTexture( 'images/cbmerch01.png' );
 var cbMaterial = new THREE.MeshBasicMaterial( { map: cbTexture } );
 var cbMerch01 = new THREE.Mesh( cbBox, cbMaterial );
