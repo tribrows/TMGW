@@ -285,10 +285,10 @@ render();
 */
 
 var loader4 = new THREE.GLTFLoader();
-loader4.load( './models/kitchen/kitchen03.glb', function ( gltf ) {
+loader4.load( './models/kitchen/kitchen04.glb', function ( gltf ) {
 
 var kitchen = gltf.scene;
-kitchen.scale.set(50*kitchen.scale.x, 50*kitchen.scale.y, 50*kitchen.scale.z)
+kitchen.scale.set(500*kitchen.scale.x, 500*kitchen.scale.y, 500*kitchen.scale.z)
 
 kitchen.rotation.y = 360;
 kitchen.position = [-0,-500,0];
@@ -297,12 +297,12 @@ render();
 } );
 
 var ambient = new THREE.AmbientLight( 0x555555 ); scene.add(ambient);
-var materialSphere01 = new THREE.MeshLambertMaterial({
+/*var materialSphere01 = new THREE.MeshLambertMaterial({
         color: 0x0000ff,
         transparent: true,
         opacity: 0.5
     });
-
+*/
 clock = new THREE.Clock(false); 
 
 	// STAR//////////////
