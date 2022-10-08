@@ -58,6 +58,8 @@
   z-index: 1;
 }
   canvas { filter: hue-rotate(2deg) opacity(35%) contrast(220%) blur(1px);
+box-shadow: 0 0 0 0.8em #fff, 0 0 0 2.4em #2e82b5;
+margin: 4em;
 }
 </style>
 <!-- DIFFERENT TIMES OF DAY//NIGHT//TONES//FILTER//PAGE COLOUR 
@@ -178,7 +180,41 @@ camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
 
 camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
 
+//VIGNETTE OVERLAY///////////////////////////////////////
+/*
+const shaderVignette = VignetteShader;
+const effectVignette = new ShaderPass( shaderVignette );
+effectVignette.uniforms[ 'offset' ].value = 0.95;
+effectVignette.uniforms[ 'darkness' ].value = 1.6;
 
+const rtParameters = {stencilBuffer: true};
+const rtWidth = width / 2;
+const rtHeight = height / 2;
+
+shaderActive == "true";
+composer = new EffectComposer( renderer, new THREE.WebGLRenderTarget( rtWidth, rtHeight, rtParameters ) );
+
+composer.addPass( effectVignette );
+
+*/
+//PERFORMANCE :: RENDER ORDER & CULL SCENE FRONT TO BACK
+
+//const renderBackground = new RenderPass( sceneBG, cameraOrtho );
+//const renderModel = new RenderPass( sceneModel, cameraPerspective );
+//renderModel.clear = false;
+
+//composer = new EffectComposer( renderer, new THREE.WebGLRenderTarget( rtWidth * 2, rtHeight * 2, rtParameters ) );
+
+//composer.addPass( renderBackground );
+//composer.addPass( renderModel );
+//composer.addPass( renderMaskInverse );
+//composer.addPass( effectHBlur );
+//composer.addPass( effectVBlur );
+//composer.addPass( clearMask );
+
+//renderScene = new TexturePass( composer.renderTarget2.texture );
+
+//CBBOX////////////////////////////////////
 var imagePrefix = "./images/bg04";
 	var directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
 	var imageSuffix = ".png";
@@ -216,6 +252,11 @@ function onMouseDown(event){
 //Left Mouse Fire
 //Right Mouse Jump
 }
+
+
+
+
+//SETUP///////////////////////////////////////
 function setup() {
 
 //init();
@@ -880,7 +921,15 @@ function render() {
     //controls.update();
     //scene.add(controls.getObject());
     renderer.render(scene, camera);
+
+//renderer.setViewport( 0, 0, halfWidth, halfHeight );
+/* if ( shaderActive == "none" )
+		renderer.render( scene, camera );
+	else
+		composer.render();
+*/
 }
+
 function hideVideo(){
 
 var video = document.getElementById('video')
