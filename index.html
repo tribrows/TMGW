@@ -57,7 +57,8 @@
 #video {
   z-index: 1;
 }
-  canvas { filter: hue-rotate(2deg) opacity(35%) contrast(220%) blur(1px);
+  canvas { 
+filter: hue-rotate(2deg) opacity(35%) contrast(220%) blur( 18px );
 box-shadow: 0 0 0 0.8em #fff, 0 0 0 2.4em #2e82b5;
 margin: 4em;
 }
@@ -80,6 +81,7 @@ if (canJump === true) velocity.y += 450;
 */
 
 function openFullscreen() {
+	hideVideo()
       //var canvas = document.getElementById("playcanvas");
       var elem = document.getElementsByTagName("canvas")[0];
 
@@ -97,6 +99,7 @@ function openFullscreen() {
       }
       elem.style.width = '100%';
       elem.style.height = '100%';
+	
 
     }
 
@@ -685,7 +688,11 @@ var geometry02 = new THREE.BoxBufferGeometry(200, 30, 3500).toNonIndexed(); var 
 var blocker = document.getElementById('blocker');
 var instructions = document.getElementById('instructions');
 
+//??? CHANGE TO PLAY, LEARN, ACTION + REMOVE LISTENERS ///////////////////////
 instructions.addEventListener('click', function() {
+
+// CREATE FILTER SETTINGS BLURRED PAUSED & CURRENT SCENE ACTIVE
+renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%) blur( 1px )`;
 
         controls.lock();
 
@@ -697,6 +704,7 @@ instructions.addEventListener('click', function() {
 
         instructions.style.display = 'none';
         blocker.style.display = 'none';
+	hideVideo()
 
     });
 
@@ -921,6 +929,8 @@ function render() {
     //controls.update();
     //scene.add(controls.getObject());
     renderer.render(scene, camera);
+
+//renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%) blur( 18px )`;
 
 //renderer.setViewport( 0, 0, halfWidth, halfHeight );
 /* if ( shaderActive == "none" )
