@@ -67,9 +67,79 @@ margin: 4em;
 BLUEY WASHED OUT//EYE ADJUSTMENT ANIMATION//CUTSCENE 
 filter: contrast(40%) brightness(221%) blur(2.3px) hue-rotate(270deg); -->
 
+</head>
+
+<body> 
 
 <script type="text/javascript">
+var objects = [];
+var raycaster;
+var moveForward = false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
+var canJump = false;
 
+var prevTime = performance.now();
+var velocity = new THREE.Vector3();
+var direction = new THREE.Vector3();
+var vertex = new THREE.Vector3();
+var color = new THREE.Color();
+
+var VRButton = "";
+var controls = "";
+
+//VARIABLES :: CLEAR HTML ELEMENTS Vs CANVAS ELEMENTS//////////////////////////
+var scenesDiv, playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water, elem;
+
+init();
+//setupScene();
+//animate();
+
+function init() {
+				
+camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 1000 );
+camera.position.x = 80;
+camera.position.y = 50;
+camera.position.z = 80;
+
+scene = new THREE.Scene();
+
+renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+
+scenesDiv = document.getElementById('scenes');
+render();
+//document.getElementById('scenes').appendChild(renderer.domElement);
+elem = document.getElementsByTagName("canvas")[0];
+
+document.body.appendChild( renderer.domElement );
+				
+//renderer.render(scene, camera);
+				
+}
+			
+//scene = new THREE.Scene();
+scene.background = new THREE.Color(0x555555);
+//purple fog
+scene.fog = new THREE.FogExp2(0x860081, 0.003);
+
+renderer = new THREE.WebGLRenderer({
+            //antialias: true
+        });
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+//document.body.appendChild( renderer.domElement );
+
+
+
+//playcanvas = document.getElementById('playcanvas')
+//renderer = new THREE.WebGLRenderer( { canvas: playcanvas } );
+
+aspr = 1.0;
+camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
+
+camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
 
 /*document.body.addEventListener("wheel", wheelJump);
 
@@ -82,8 +152,11 @@ if (canJump === true) velocity.y += 450;
 
 function openFullscreen() {
 	hideVideo()
-      //var canvas = document.getElementById("playcanvas");
-      var elem = document.getElementsByTagName("canvas")[0];
+//scenesDiv = document.getElementById('scenes');
+//scenesDiv.appendChild(renderer.domElement);
+elem = document.getElementsByTagName("canvas")[0];
+
+            //var elem = document.getElementsByTagName("canvas")[0];
 
 	//blocker.style.display = 'block'; //block
         //instructions.style.display = ''; //""
@@ -143,45 +216,10 @@ function animate() {
 
         }
         prevTime = time;
-    }}
-    
-var objects = [];
-var raycaster;
-var moveForward = false;
-var moveBackward = false;
-var moveLeft = false;
-var moveRight = false;
-var canJump = false;
+    }
+setupThreeJS();
+}
 
-var prevTime = performance.now();
-var velocity = new THREE.Vector3();
-var direction = new THREE.Vector3();
-var vertex = new THREE.Vector3();
-var color = new THREE.Color();
-
-var VRButton = "";
-var controls = "";
-
-var playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water;
-
-scene = new THREE.Scene();
-scene.background = new THREE.Color(0x555555);
-//purple fog
-scene.fog = new THREE.FogExp2(0x860081, 0.003);
-
-renderer = new THREE.WebGLRenderer({
-            //antialias: true
-        });
-
-//playcanvas = document.getElementById('playcanvas')
-//renderer = new THREE.WebGLRenderer( { canvas: playcanvas } );
-
-renderer.setSize(window.innerWidth, window.innerHeight);
-
-aspr = 1.0;
-camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
-
-camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
 
 //VIGNETTE OVERLAY///////////////////////////////////////
 /*
@@ -250,14 +288,12 @@ camera.lookAt(new THREE.Vector3(-250, -150, -2550));
 document.addEventListener('mousedown', onMouseDown, false);
 
 function onMouseDown(event){
-   console.log("Scroll, Fire or Jump");
+
+console.log("Scroll, Fire or Jump");
 //Scroll Options//Inventory
 //Left Mouse Fire
 //Right Mouse Jump
 }
-
-
-
 
 //SETUP///////////////////////////////////////
 function setup() {
@@ -269,10 +305,11 @@ setupThreeJS();
 
 }
 
+
 //SETUP THREEJS
 function setupThreeJS() {
 
-document.getElementById('scenes').appendChild(renderer.domElement);
+
 //renderer.domElement.setAttribute('tabindex', -1);
 
 /*
@@ -692,6 +729,10 @@ var instructions = document.getElementById('instructions');
 //??? CHANGE TO PLAY, LEARN, ACTION + REMOVE LISTENERS ///////////////////////
 instructions.addEventListener('click', function() {
 
+//scenesDiv = document.getElementById('scenes');
+//scenesDiv.appendChild(renderer.domElement);
+elem = document.getElementsByTagName("canvas")[0];
+
 // CREATE FILTER SETTINGS BLURRED PAUSED & CURRENT SCENE ACTIVE
 renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%) blur( 1px )`;
 
@@ -929,14 +970,20 @@ function render() {
     requestAnimationFrame(render);
     //controls.update();
     //scene.add(controls.getObject());
+
+var sceneChildren = document.getElementById('scenes').childElementCount  
+if ( sceneChildren > 1 ) { } else {
+document.getElementById('scenes').appendChild(renderer.domElement);
+};
+
     renderer.render(scene, camera);
 
 //renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(420%) blur( 18px )`;
 
 //renderer.setViewport( 0, 0, halfWidth, halfHeight );
-/* if ( shaderActive == "none" )
-		renderer.render( scene, camera );
-	else
+/* if ( shaderActive == "none" ){
+	renderer.render( scene, camera );
+	} else {
 		composer.render();
 */
 }
@@ -950,9 +997,7 @@ overlay.style.display = 'none';
 }
 
 </script>
-</head>
 
-<body onload="setup();">
 
   <video id="video" autoplay loop style="width: 100%;height: 800px">
     <source id='mp4'
@@ -967,6 +1012,7 @@ overlay.style.display = 'none';
     <p>Your user agent does not support the HTML5 Video element.</p>
   </video>
   <div id="overlay" onClick="hideVideo();" style="font-size:26px;color:#777!important;cursor:pointer;text-decoration: underline;"> :: Are we rolling? ::</div>
+
 
 <div id="scenes">
 <div id="blocker" style="display: block;">
