@@ -92,34 +92,24 @@ var controls = "";
 //VARIABLES :: CLEAR HTML ELEMENTS Vs CANVAS ELEMENTS//////////////////////////
 var scenesDiv, playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water, elem;
 
-init();
+
 //setupScene();
 //animate();
 
 function init() {
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10 );
+				camera.position.z = 3;
+
+				scene = new THREE.Scene();
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );				
 				
-camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 1000 );
-camera.position.x = 80;
-camera.position.y = 50;
-camera.position.z = 80;
+			}
 
-scene = new THREE.Scene();
-
-renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-
-scenesDiv = document.getElementById('scenes');
-render();
-//document.getElementById('scenes').appendChild(renderer.domElement);
-elem = document.getElementsByTagName("canvas")[0];
-
-document.body.appendChild( renderer.domElement );
-				
-//renderer.render(scene, camera);
-				
-}
 			
-//scene = new THREE.Scene();
+scene = new THREE.Scene();
 scene.background = new THREE.Color(0x555555);
 //purple fog
 scene.fog = new THREE.FogExp2(0x860081, 0.003);
@@ -217,7 +207,7 @@ function animate() {
         }
         prevTime = time;
     }
-setupThreeJS();
+
 }
 
 
@@ -995,6 +985,9 @@ var overlay = document.getElementById('overlay')
 video.style.display = 'none';
 overlay.style.display = 'none';
 }
+
+init();
+setupThreeJS();
 
 </script>
 
