@@ -58,7 +58,7 @@
   z-index: 1;
 }
   canvas { 
-filter: hue-rotate(2deg) opacity(35%) contrast(220%) blur( 18px );
+filter: hue-rotate(2deg) opacity(35%) contrast(420%) blur( 18px );
 box-shadow: 0 0 0 0.8em #fff, 0 0 0 2.4em #2e82b5;
 margin: 4em;
 }
@@ -327,7 +327,7 @@ scene.add( text );
 render();
 } );
 */
-
+/*
 var loader4 = new THREE.GLTFLoader();
 loader4.load( './models/kitchen/kitchen04.glb', function ( gltf ) {
 
@@ -339,6 +339,7 @@ kitchen.position = [-0,-500,0];
 scene.add( kitchen);
 render();
 } );
+*/
 
 var ambient = new THREE.AmbientLight( 0x555555 ); scene.add(ambient);
 /*var materialSphere01 = new THREE.MeshLambertMaterial({
@@ -930,7 +931,7 @@ function render() {
     //scene.add(controls.getObject());
     renderer.render(scene, camera);
 
-//renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%) blur( 18px )`;
+//renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(420%) blur( 18px )`;
 
 //renderer.setViewport( 0, 0, halfWidth, halfHeight );
 /* if ( shaderActive == "none" )
