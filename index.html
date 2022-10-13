@@ -59,7 +59,10 @@
 }
   canvas { 
 filter: hue-rotate(2deg) opacity(35%) contrast(420%) blur( 18px );
-box-shadow: 0 0 0 0.8em #fff, 0 0 0 2.4em #2e82b5;
+box-shadow: 0 0 0 0.2em #000,0 0 0 0.4em #f875c2,0 0 0 0.6em #000, 0 0 0 2.4em #39bddc,0 0 0 0.8em #fff, 0 0 0 2.6em #000;
+      
+/*mask-image: radial-gradient(circle, black 57%, rgba(0, 0, 0, 0.1) 20%);*/
+
 margin: 4em; transition: 1.2s;
 }
 </style>
@@ -717,8 +720,11 @@ var instructions = document.getElementById('instructions');
 //??? CHANGE TO PLAY, LEARN, ACTION + REMOVE LISTENERS ///////////////////////
 instructions.addEventListener('click', function() {
 
+    //hide mask image ???
+//renderer.domElement.style.maskImage = "";
 // CREATE FILTER SETTINGS BLURRED PAUSED & CURRENT SCENE ACTIVE
 renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%) blur( 1px )`;
+    
 
         controls.lock();
 
