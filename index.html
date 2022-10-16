@@ -88,7 +88,24 @@ filter: contrast(40%) brightness(221%) blur(2.3px) hue-rotate(270deg); -->
 
 
 <script type="text/javascript">
-
+    
+    document.addEventListener("keydown", function(e) {
+   if (e.key === "Escape") {
+    // var el = document.getElementById("game");
+     //exitFullScreen(el);
+       closeFullscreen()
+   }  
+ }, false);
+function closeFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) { /* Safari */
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) { /* IE11 */
+    document.msExitFullscreen();
+  }
+    renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(420%) blur( 18px )`;
+}
 
 /*document.body.addEventListener("wheel", wheelJump);
 
