@@ -91,9 +91,8 @@ filter: contrast(40%) brightness(221%) blur(2.3px) hue-rotate(270deg); -->
     
     document.addEventListener("keydown", function(e) {
    if (e.key === "Escape") {
-    // var el = document.getElementById("game");
-     //exitFullScreen(el);
-       closeFullscreen()
+    document.getElementById("play").innerHTML= ":: Resume :: ";
+    closeFullscreen();
    }  
  }, false);
 function closeFullscreen() {
