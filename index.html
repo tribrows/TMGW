@@ -88,8 +88,14 @@ filter: contrast(40%) brightness(221%) blur(2.3px) hue-rotate(270deg); -->
 
 <script type="text/javascript">
     
-    document.addEventListener("keydown", function(e) {
-   if (e.key === "Escape") {
+    document.addEventListener("keydown", function(event) {
+   if (event.keyCode === 70) {
+    openFullscreen();
+   }  
+}, false); /* f key fullscreen FIX CSS BLUR */
+    
+    document.addEventListener("keydown", function(event) {
+   if (event.key === "Escape") {
     document.getElementById("play").innerHTML= ":: Resume :: ";
     closeFullscreen();
    }  
@@ -1042,7 +1048,7 @@ overlay.style.display = 'none';
 </div>
 </div>
 
-
+<!-- FIX CANVAS RENDER BUG <canvas class="canvas" id="canvas" oncontextmenu="event.preventDefault()"></canvas>-->
 <!-- video intro information ::
 
 <div> 
