@@ -337,10 +337,14 @@ rolling.scale.set(80*rolling.scale.x,80*rolling.scale.y,80*rolling.scale.z)
 rolling.rotation.y = 180;
 rolling.position.set(-150,300,-250);
 
-scene.add( rolling );
+var rolling2 = rolling.clone();
+rolling2.position.set(-150,350,-250);
+rolling2.rotation.y = 70;
+scene.add( rolling, rolling2 );
 render();
 } );
-
+    
+    
 var loader2 = new THREE.GLTFLoader();
 loader2.load( './models/tmgw_logo_jump.glb', function ( gltf ) {
 var logo = gltf.scene;
