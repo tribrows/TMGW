@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - Motion blur</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<script src="/cdn-cgi/apps/head/EQZCnk4gCeNwUQsZ03sLJaa105M.js"></script><style>
+			*{ box-sizing: border-box;}
+			body {
+				font-family: tahoma;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+				font-size: 12px;
+			}
+			p{ color: white; position: absolute; left: 10px; top: 5px; text-shadow: 0 -1px 0 rgba( 0, 0, 0, .6 ); z-index: 100;}
+		</style>
+	</head>
+	<body>
+
+	<p>Motion blur as post-processing effect test</p><!--: Click and drag to rotate camera, WASDX and Space to move around</p>-->
+
+		<script src="motionblur_files/three.min.js"></script>
+		<script src="motionblur_files/OrbitControls.js"></script>
+		<script src="motionblur_files/dat.gui.min.js"></script>
+
+		<script src="motionblur_files/CopyShader.js"></script>
+		<script src="motionblur_files/EffectComposer.js"></script>
+		<script src="motionblur_files/ShaderPass.js"></script>
+		<script src="motionblur_files/RenderPass.js"></script>
+
+		<script type="x-shader/x-vertex" id="vs-motionBlur">
+
+			varying vec2 vUv;
+			
+			void main() {
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+				vUv = uv;
+
+			}
+
+		</script>
+
+		<script type="x-shader/x-fragment" id="fs-motionBlur">
+
+			varying vec2 vUv;
+			uniform sampler2D tDiffuse;
+			uniform sampler2D tColor;
+			uniform vec2 resolution;
+			uniform mat4 viewProjectionInverseMatrix;
+			uniform mat4 previousViewProjectionMatrix;
+			uniform float velocityFactor;
+
+			float unpack_depth(const in vec4 color) {
+				return color.r;
+				//return ( color.r * 256. * 256. * 256. + color.g * 256. * 256. + color.b * 256. + color.a ) / ( 256. * 256. * 256. );
+			}
+
+			void main() {
+				
+				float zOverW = unpack_depth( texture2D( tDiffuse, vUv ) );
+
+				// H is the viewport position at this pixel in the range -1 to 1.  
+				vec4 H = vec4( vUv.x * 2. - 1., vUv.y * 2. - 1., zOverW, 1. );  
+				// Transform by the view-projection inverse.  
+				vec4 D = H * viewProjectionInverseMatrix;
+				// Divide by w to get the world position.  
+				vec4 worldPos = D / D.w;
+
+				vec4 currentPos = H;  
+				// Use the world position, and transform by the previous view-projection matrix.  
+				vec4 previousPos = worldPos * previousViewProjectionMatrix;  
+				// Convert to nonhomogeneous points [-1,1] by dividing by w.  
+				previousPos /= previousPos.w;  
+				// Use this frame's position and last frame's to compute the pixel velocity.  
+				vec2 velocity = velocityFactor * ( currentPos.xy - previousPos.xy ) * .5;
+				//velocity = .01 *  normalize( velocity ); 
+
+				vec4 finalColor = vec4( 0. );
+				vec2 offset = vec2( 0. ); 
+				float weight = 0.;
+				const int samples = 20;
+				for( int i = 0; i < samples; i++ ) {  
+	      			offset = velocity * ( float( i ) / ( float( samples ) - 1. ) - .5 );
+	      			vec4 c = texture2D( tColor, vUv + offset );
+					finalColor += c;
+				}  
+				finalColor /= float( samples );
+				gl_FragColor = vec4( finalColor.rgb, 1. );
+				//gl_FragColor = vec4( velocity, 0., 1. );
+				//gl_FragColor.xyz = previousPos.xyz;
+				//gl_FragColor = vec4( gl_FragCoord.xy / resolution, 0., 1. );
+				//gl_FragColor = vec4( vec3( zOverW ), 1. );
+
+			}
+
+		</script>
+
+		<script type="x-shader/x-vertex" id="vs-depthRender">
+			
+			void main() {
+
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+				gl_Position = projectionMatrix * mvPosition;
+
+			}
+
+		</script>
+
+		<script type="x-shader/x-fragment" id="fs-depthRender">
+		
+		uniform float mNear;
+		uniform float mFar;
+		uniform float opacity;
+
+		vec4 pack_depth( const in float f ) {
+			vec4 color;
+			color.r = floor( f / ( 256. * 256. * 256. ) );
+			color.g = floor( ( mod( f,  256. * 256. * 256. ) ) / ( 256. * 256. ) );
+			color.b = floor( ( mod( f,  256. * 256. ) ) / 256. );
+			color.a = floor( mod( f, 256.)  );
+			return color / 256.0;
+		}
+
+		void main() {
+			float depth = gl_FragCoord.z / gl_FragCoord.w;
+			float color = 1. - ( depth - mNear ) / ( mFar - mNear );
+			/*color *= 256. * 256. * 256. * 256.;
+			gl_FragColor = pack_depth( color );*/
+			gl_FragColor = vec4( color, color, color, 1. );
+		}
+
+		</script>
+
+		<script>
+
+			var container;
+			var camera, controls, scene, projector, renderer;
+			var objects = [], plane, sphere;
+			var composer, pass, composer2, pass2;
+			var mesh;
+			var clock = new THREE.Clock();
+			var lon = lat = 0, position = { x: 0, y: 0 }, isUserInteracting = false;
+			var keys = { up: false, left: false, right: false, down: false, forward: false, back: false };
+			var fov = nfov = 70;
+
+			var mCurrent = new THREE.Matrix4();
+			var mPrev = new THREE.Matrix4();
+			var tmpArray = new THREE.Matrix4();
+			var camTranslateSpeed = new THREE.Vector3();
+			var prevCamPos = new THREE.Vector3();
+
+			var mouse = new THREE.Vector2(),
+			offset = new THREE.Vector3(),
+			INTERSECTED, SELECTED;
+
+			var depthMaterial;
+			var meshMaterial = new THREE.MeshPhongMaterial( { color: 0x806040, specular: 0xffffff, specularity: 10, shading: THREE.FlatShading });
+			var meshMaterial2 = new THREE.MeshBasicMaterial( { color: 0xffffff, emissive: 0xffffff });
+			var sphereMaterial = new THREE.MeshNormalMaterial( { color: 0xff00ff, specular: 0x806040, specularity: 10, shading: THREE.SmoothShading });
+
+			var Params = function() {	
+				this.speed = 5;
+				this.blur = 1;
+				this.fps = 60;
+				this.animate = true;
+			};
+			var params = new Params();
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( fov, window.innerWidth / window.innerHeight, 1, 3000 );
+				camera.position.set( 10, 0, 0 );
+
+				/*controls = new THREE.TrackballControls( camera );
+				controls.rotateSpeed = 1.0;
+				controls.zoomSpeed = 1.2;
+				controls.panSpeed = 0.8;
+				controls.noZoom = false;
+				controls.noPan = false;
+				controls.staticMoving = true;
+				controls.dynamicDampingFactor = 0.3;*/
+				controls = new THREE.OrbitControls( camera );
+				controls.damping = 0.2;
+				controls.keyPanSpeed = 700;
+
+				scene = new THREE.Scene();
+
+				scene.add( new THREE.AmbientLight( 0xb70000 ) );
+
+				var light = new THREE.SpotLight( 0xffffff, 1.5 );
+				light.position.set( 0, 500, 2000 );
+				light.castShadow = true;
+
+				light.shadowCameraNear = 200;
+				light.shadowCameraFar = camera.far;
+				light.shadowCameraFov = 50;
+
+				light.shadowBias = -0.00022;
+				light.shadowDarkness = 0.5;
+
+				light.shadowMapWidth = 2048;
+				light.shadowMapHeight = 2048;
+
+				var light = new THREE.SpotLight( 0xffffff, 1.5 );
+				light.position.set( 500, -500, 2000 );
+				light.castShadow = true;
+
+				light.shadowCameraNear = 200;
+				light.shadowCameraFar = camera.far;
+				light.shadowCameraFov = 50;
+
+				light.shadowBias = -0.00022;
+				light.shadowDarkness = 0.5;
+
+				light.shadowMapWidth = 2048;
+				light.shadowMapHeight = 2048;
+
+				scene.add( light );
+
+				sphere = new THREE.Mesh( new THREE.SphereGeometry( 1500, 30, 30 ), sphereMaterial );
+				sphere.scale.x = -1;
+				//scene.add( sphere );
+
+				var s = 3;
+				var g = new THREE.Geometry();
+				var geometry = new THREE.BoxGeometry( 40, 40, 40 );
+				//var geometry = new THREE.IcosahedronGeometry( 40, 1 );
+
+				for ( var i = 0; i < 500; i ++ ) {
+
+					var object = new THREE.Mesh( geometry, depthMaterial );//new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+
+					object.material.ambient = object.material.color;
+
+					object.position.x = s * ( Math.random() * 1000 - 500 );
+					object.position.y = s * ( Math.random() * 600 - 300 );
+					object.position.z = s * ( Math.random() * 800 - 400 );
+
+					object.rotation.x = Math.random() * 2 * Math.PI;
+					object.rotation.y = Math.random() * 2 * Math.PI;
+					object.rotation.z = Math.random() * 2 * Math.PI;
+
+					object.scale.x = Math.random() * 2 + 1;
+					object.scale.y = Math.random() * 2 + 1;
+					object.scale.z = Math.random() * 2 + 1;
+
+					object.updateMatrixWorld();
+					//THREE.GeometryUtils.merge( g, object );
+					g.merge( object.geometry, object.matrixWorld );
+
+				}
+
+				depthMaterial = new THREE.ShaderMaterial( {
+
+					uniforms: {
+						mNear: { type: 'f', value: camera.near },
+						mFar: { type: 'f', value: camera.far },
+						opacity: { type: 'f', value: 1 }
+					},
+
+					vertexShader: document.getElementById( 'vs-depthRender' ).textContent,
+					fragmentShader: document.getElementById( 'fs-depthRender' ).textContent
+				} );
+
+				mesh = new THREE.Mesh( g, depthMaterial );
+				mesh.castShadow = true;
+				mesh.receiveShadow = true;
+				scene.add( mesh );
+
+				var s = 2;
+				var g = new THREE.Geometry();
+				var geometry = new THREE.IcosahedronGeometry( 2, 1 );
+
+				for ( var i = 0; i < 1000; i ++ ) {
+
+					var object = new THREE.Mesh( geometry, depthMaterial );//new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+
+					object.material.ambient = object.material.color;
+
+					object.position.x = s * ( Math.random() * 1000 - 500 );
+					object.position.y = s * ( Math.random() * 600 - 300 );
+					object.position.z = s * ( Math.random() * 800 - 400 );
+
+					object.updateMatrixWorld();
+					g.merge( object.geometry, object.matrixWorld );
+
+				}
+
+				mesh2 = new THREE.Mesh( g, depthMaterial );
+				scene.add( mesh2 );
+
+				plane = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0x000000, opacity: 0.25, transparent: true, wireframe: true } ) );
+				plane.visible = false;
+				scene.add( plane );
+
+				projector = new THREE.Projector();
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				document.body.appendChild( renderer.domElement );
+				renderer.sortObjects = false;
+				renderer.setClearColor( 0 );
+				renderer.shadowMapEnabled = true;
+				renderer.shadowMapType = THREE.PCFShadowMap;
+
+				composer = new THREE.EffectComposer( renderer );
+				composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+				composer2 = new THREE.EffectComposer( renderer );
+				composer2.addPass( new THREE.RenderPass( scene, camera ) );
+
+				shader = {
+
+					uniforms: {
+						tDiffuse: { type: 't', value: null },
+						tColor: { type: 't', value: null },
+						resolution: { type: 'v2', value: new THREE.Vector2( 1, 1 ) },
+						viewProjectionInverseMatrix: { type: 'm4', value: new THREE.Matrix4() },
+						previousViewProjectionMatrix: { type: 'm4', value: new THREE.Matrix4() },
+						velocityFactor: { type: 'f', value: 1 }
+					},
+
+					vertexShader: document.getElementById( 'vs-motionBlur' ).textContent,
+					fragmentShader: document.getElementById( 'fs-motionBlur' ).textContent
+				}
+
+				pass = new THREE.ShaderPass( shader );
+				pass.renderToScreen = true;
+				composer.addPass( pass );
+
+				container.appendChild( renderer.domElement );
+
+				container.addEventListener( 'mousedown', onMouseDown, false );
+				container.addEventListener( 'mousemove', onMouseMove, false );
+				container.addEventListener( 'mouseup', onMouseUp, false );
+				container.addEventListener( 'mousewheel', onMouseWheel, false );
+				container.addEventListener( 'DOMMouseScroll', onMouseWheel, false);
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+				onWindowResize();
+
+				var gui = new dat.GUI();
+				gui.add(params, 'speed', .1, 10 );
+				gui.add(params, 'blur', .1, 10 );
+				gui.add(params, 'fps', 1, 60 );
+				gui.add(params, 'animate' );
+
+			}
+
+			function onWindowResize() {
+
+				var s = 1;
+				composer.setSize( s * window.innerWidth, s * window.innerHeight );
+				composer2.setSize( s * window.innerWidth, s * window.innerHeight );
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( s * window.innerWidth, s * window.innerHeight );
+				pass.uniforms.resolution.value.set( s * window.innerWidth, s * window.innerHeight );
+
+			}
+
+			window.addEventListener( 'keydown', function( e ) {
+				switch( e.keyCode ) {
+			        case 87: keys.forward = true; e.preventDefault(); break;
+			        case 65: keys.left = true; e.preventDefault(); break;
+			        case 68: keys.right = true; e.preventDefault(); break;
+			        case 83: keys.back = true; e.preventDefault(); break;
+			        case 32: keys.up = true; e.preventDefault(); break;
+			        case 88: keys.down = true; e.preventDefault(); break;
+
+			        case 69: {
+			        	mesh.material.uniforms.useParallaxMapping.value = !mesh.material.uniforms.useParallaxMapping.value;
+			        }
+			    }
+			    
+			} )
+
+			window.addEventListener( 'keyup', function( e ) {
+			    switch( e.keyCode ) {
+			        case 87: keys.forward = false; e.preventDefault(); break;
+			        case 65: keys.left = false; e.preventDefault(); break;
+			        case 68: keys.right = false; e.preventDefault(); break;
+			        case 83: keys.back = false; e.preventDefault(); break;
+			        case 32: keys.up = false; e.preventDefault(); break;
+			        case 88: keys.down = false; e.preventDefault(); break;
+			    }
+			    e.preventDefault();
+			} )
+
+			function onMouseDown( event ) {
+
+				event.preventDefault();
+
+				isUserInteracting = true;
+
+				onPointerDownPointerX = event.clientX;
+				onPointerDownPointerY = event.clientY;
+
+				onPointerDownLon = lon;
+				onPointerDownLat = lat;
+
+			}
+
+			var mouse = { x: 0, y: 0 }
+			var projector;
+
+			function onMouseDown( event ) {
+
+			    event.preventDefault();
+
+			    isUserInteracting = true;
+			    
+			    onPointerDownPointerX = event.clientX;
+			    onPointerDownPointerY = event.clientY;
+
+			    onPointerDownLon = lon;
+			    onPointerDownLat = lat;
+			    
+			}
+
+			function onMouseUp( event ) {
+
+			    event.preventDefault();
+
+			    isUserInteracting = false;
+			    
+			}
+
+			function onMouseMove( event ) {
+
+			    if ( isUserInteracting ) {
+			        var dx = ( event.clientX - onPointerDownPointerX );
+			        var dy = -( event.clientY - onPointerDownPointerY );
+			        position.x = .75 * dx + onPointerDownLon;
+			        position.y = .75 * dy + onPointerDownLat;
+			    }
+
+			    var mouse = {
+			        x: ( event.clientX / container.clientWidth ) * 2 - 1,
+			        y: - ( event.clientY / container.clientHeight ) * 2 + 1
+			    }
+
+			}
+
+			function onMouseWheel( event ) {
+
+
+				var s = 10;
+				// WebKit
+
+				if ( event.wheelDeltaY ) {
+
+					nfov -= s * event.wheelDeltaY * 0.01;
+
+				// Opera / Explorer 9
+
+				} else if ( event.wheelDelta ) {
+
+					nfov -= s * event.wheelDelta * 0.05;
+
+				// Firefox
+
+				} else if ( event.detail ) {
+
+					nfov += s * event.detail * 1.0;
+
+				}
+
+				
+			}
+
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				
+			}
+
+			var animationSpeed = 10;
+			var lastTime = Date.now();
+			var projectionMatrixInverse = new THREE.Matrix4();
+
+			function render() {
+
+				var ellapsedFactor = clock.getDelta();
+
+			    /*var olon = lon, olat = lat;
+			    var s = 2.5 * ellapsedFactor;
+			    lon = lon + ( position.x - olon ) * s;
+			    lat = lat + ( position.y - olat ) * s;
+			    var d = 100;
+			    lat = Math.max( - 85, Math.min( 85, lat ) );
+			    var phi = ( 90 - lat ) * Math.PI / 180;
+			    var theta = lon * Math.PI / 180;
+
+			    var step = 800 * ellapsedFactor;
+
+			    if( keys.forward ) {
+			        camera.position.x += step * Math.cos( theta );
+			        camera.position.z += step * Math.sin( theta );
+			    }
+			    if( keys.back ) {
+			        camera.position.x -= step * Math.cos( theta );
+			        camera.position.z -= step * Math.sin( theta );
+			    }
+			    if( keys.left ) {
+			        camera.position.x += step * Math.cos( theta - Math.PI / 2 );
+			        camera.position.z += step * Math.sin( theta - Math.PI / 2  );
+			    }
+			    if( keys.right ) {
+			        camera.position.x -= step * Math.cos( theta - Math.PI / 2  );
+			        camera.position.z -= step * Math.sin( theta - Math.PI / 2  );
+			    }
+			    if( keys.up ) {
+			        camera.position.y += 5 * step;
+			    }
+			    if( keys.down ) {
+			        camera.position.y -= step;
+			    }
+
+			    fov += ( nfov - fov ) * s;
+				camera.projectionMatrix.makePerspective( fov, window.innerWidth / window.innerHeight, 1, 10000 );
+
+			    camera.target.x = camera.position.x + d * Math.sin( phi ) * Math.cos( theta );
+			    camera.target.y = camera.position.y + d * Math.cos( phi );
+			    camera.target.z = camera.position.z + d * Math.sin( phi ) * Math.sin( theta );
+			    camera.lookAt( camera.target );*/
+
+			    //camera.position.x = 100 * Math.cos( .01 * Date.now() );*/
+			    
+			    //controls.update();
+			    var t = Date.now();
+			    if( t - lastTime > ( 1000 / params.fps ) ) {
+
+				    pass.material.uniforms.velocityFactor.value = params.blur;
+				    animationSpeed = .001 * params.speed;
+
+				    if( params.animate ) {
+				   		camera.position.z = 500 * Math.sin( animationSpeed * .11 * t );
+				    	camera.position.x = 500 * Math.sin( animationSpeed * .111 * t );
+				    	camera.position.y = 500 * Math.sin( animationSpeed * .121 * t );
+				    
+				    	camera.rotation.x = animationSpeed * .1 * t;
+				    	camera.rotation.y = animationSpeed * .11 * t;
+				    	camera.rotation.z = animationSpeed * .12 * t;
+				    }
+
+				    camera.updateMatrix();
+				    camera.updateMatrixWorld();
+
+					tmpArray.copy( camera.matrixWorldInverse );
+					tmpArray.multiply( camera.projectionMatrix );
+					mCurrent.getInverse( tmpArray );
+
+					pass.material.uniforms.viewProjectionInverseMatrix.value.copy( mCurrent );
+					pass.material.uniforms.previousViewProjectionMatrix.value.copy( mPrev );
+					
+					mesh.material = meshMaterial;
+					mesh2.material = meshMaterial2;
+					sphere.material = sphereMaterial;
+					composer2.render();
+
+					mesh.material = depthMaterial;
+					mesh2.material = depthMaterial;
+					sphere.material = depthMaterial;
+					pass.material.uniforms.tColor.value = composer2.renderTarget2;
+					composer.render();
+
+					mPrev.copy( tmpArray );
+
+					prevCamPos.copy( camera.position );
+
+					lastTime = t;
+
+				}
+				//renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>
