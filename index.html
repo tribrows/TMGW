@@ -42,15 +42,6 @@
 <meta name="theme-color" content="#ffffff">
 
 <style>
-   /* Safari */
-:-webkit-full-screen {
-  background-color: #333;
-}
-
-/* IE11 */
-:-ms-fullscreen {
-  background-color: #333;
-}
 
 /* Standard syntax */
 :fullscreen {
@@ -121,7 +112,8 @@ if (canJump === true) velocity.y += 450;
 */
 
 function openFullscreen() {
-	hideVideo()
+    playScreen();
+	hideVideo();
       //var canvas = document.getElementById("playcanvas");
       var elem = document.getElementsByTagName("canvas")[0];
 
@@ -306,7 +298,6 @@ frequency: 1.5,
 heightmap: pathImage,
 //heightmap: customInfluences,
 //material: new THREE.MeshBasicMaterial({map:sandTexture}),
-//light off blue
 material: new THREE.MeshBasicMaterial({color: 0x335599}),
 //map: grassImage,
 maxHeight: 100,
@@ -430,7 +421,7 @@ for ( let i = 0; i < 20; i ++ ) {
 // DECK TEST //////////////////////////////////////////////////////////////
 var geometry = new THREE.BoxBufferGeometry(100, 30, 500).toNonIndexed();
 //var pos = geometry.attributes.position;
-var material = new THREE.MeshBasicMaterial({color: 0x860081});
+var material = new THREE.MeshBasicMaterial({color: 0x335599});
 var cube = new THREE.Mesh(geometry, material);
 
 cube.position.x =250;
@@ -441,6 +432,18 @@ scene.add(cube);
 objects.push( cube );
 
 var geometry02 = new THREE.BoxBufferGeometry(200, 30, 3500).toNonIndexed(); var material = new THREE.MeshBasicMaterial({color: 0xffffff}); var cube = new THREE.Mesh(geometry02, material); cube.position.set(50,-700,-100); cube.rotation.set(0,0,0); scene.add(cube); objects.push( cube );
+    
+//FLIP MESH///////////////////////////////////////
+
+var geo = terrainScene.children[0].geometry;
+var crate = new THREE.Mesh( geo.clone());
+
+flipMesh(crate);
+
+// Add Terrain//////////////////////////////////////
+
+render();
+//}//END OF setupThreeJS
 
 //VIGNETTE OVERLAY///////////////////////////////////////
 /*
@@ -737,10 +740,14 @@ var outlineMesh3 = new THREE.Mesh( cbBox, outlineMaterial3 );
 blocker = document.getElementById('blocker');
 instructions = document.getElementById('instructions');
 play = document.getElementById('play');
-
-//??? CHANGE TO PLAY, LEARN, ACTION + REMOVE LISTENERS ///////////////////////
-play.addEventListener('click', function() {
-
+};
+    
+//??? CHANGE TO PLAY, LEARN, ACTION + REMOVE LISTENERS /////////////////////
+    
+//listener
+//play.addEventListener('click', function() {
+    
+function playScreen() {
     //hide mask image ???
 //renderer.domElement.style.maskImage = "";
 // CREATE FILTER SETTINGS BLURRED PAUSED & CURRENT SCENE ACTIVE
@@ -748,8 +755,8 @@ renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%)
     
 
         controls.lock();
-
-    }, false);
+};
+//    }, false);
 
 
     controls = new THREE.PointerLockControls(camera, renderer.domElement);
@@ -834,7 +841,7 @@ renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%)
 
     };
 	document.addEventListener('keydown', onKeyDown, false);
-    	document.addEventListener('keyup', onKeyUp, false);
+    document.addEventListener('keyup', onKeyUp, false);
 
     raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
 
@@ -908,17 +915,7 @@ renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%)
 				objects.push( box );    
 				}     
     */
-//FLIP MESH///////////////////////////////////////
 
-var geo = terrainScene.children[0].geometry;
-var crate = new THREE.Mesh( geo.clone());
-
-flipMesh(crate);
-
-// Add Terrain//////////////////////////////////////
-
-render();
-}//END OF setupThreeJS
 
 function flipMesh(object3D) {
 
@@ -1037,10 +1034,11 @@ setupThreeJS();
 <div id="scenes">
 <div id="blocker" style="display: block;">
 <div id="instructions" style="text-align: center;">
-<span id="play" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Play :: </span>
+<span id="play" onClick="playScreen()" style="font-size:36px;color:LIGHTCORAL;cursor:pointer;text-decoration: underline;">:: Play :: </span>
 
 <span id="playfullscreen" onClick="openFullscreen();" style="font-size:36px;color:lightblue!important;cursor:pointer;text-decoration: underline;">:: Fullscreen :: </span>
-<br><div style="color:#777!important;"> Move: WASD :: Jump: SPACE :: Look: MOUSE <br> ( Hit F5/reload page to fix load error..doh!)
+<br><div style="color:#777!important;"> Move: WASD :: Jump: SPACE :: Look: MOUSE <br> 
+    <!--( Hit F5/reload page to fix load error..doh!)-->
 <!--<canvas id="playcanvas"  style="width: 1280px; height: 431px;" width="1280" height="431"></canvas>-->
 </div>
 </div>
