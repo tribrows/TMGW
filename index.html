@@ -326,7 +326,6 @@ water.rotation.x = -0.5 * Math.PI;
 scene.add(water);
 */
 
-
 //GLTF LOADERS
 // FIX :: textures & compress
 var loader = new THREE.GLTFLoader();
@@ -338,7 +337,7 @@ rolling.rotation.y = 180;
 rolling.position.set(-150,300,-250);
 
 var rolling2 = rolling.clone();
-rolling2.rotation.y = -90;//70
+rolling2.rotation.y = 100;//70
 rolling2.position.set(-150,350,-250);
 scene.add( rolling, rolling2 );
 render();
@@ -987,6 +986,9 @@ for (var j = 0, jl = object3D.children.length; j < jl; j++) {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+    
+    //ANIMATE WATER LEVEL UP & DOWN
+    //ANIMATE FLOW OF WATER
 
 var water = new THREE.Mesh(
 new THREE.PlaneBufferGeometry(1024, 1024, 16, 16),
