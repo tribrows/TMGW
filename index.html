@@ -223,6 +223,225 @@ camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
 
 camera = new THREE.PerspectiveCamera(60, renderer.domElement.width / renderer.domElement.height, 1, 10000);
 
+
+//HEIGHTMAPS//////////////////////////////////////////////////////////////////////
+
+var heightmapImage = new Image();
+heightmapImage.src = mindataurl;
+
+var grassImage = new Image();
+grassImage.src = grassdataurl;
+
+var grassTexture = new THREE.ImageUtils.loadTexture(forestdataurl);//was grassdataurl
+
+// Remove a terrain
+//scene.remove(terrainScene);
+
+// Generate a terrain
+var xS = 63, yS = 63;
+
+terrainScene = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 2.5,
+heightmap: heightmapImage,
+//heightmap: customInfluences,
+material: new THREE.MeshBasicMaterial({map:grassTexture}),
+//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
+map: grassImage,
+maxHeight: 100,
+minHeight: -100,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+scene.add(terrainScene);
+
+//terrainPath//////////////////////////////////////////////////////
+var pathImage = new Image();
+pathImage.src = pathdataurl002;
+
+//debug with :: pathdataurl002 : sanddataurl
+var sandTexture = new THREE.ImageUtils.loadTexture(forestdataurl);// was sanddataurl
+
+var xS = 40, yS = 40;
+terrainPath = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 2.5,
+heightmap: pathImage,
+//heightmap: customInfluences,
+material: new THREE.MeshBasicMaterial({map:sandTexture}),
+//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
+//map: grassImage,
+maxHeight: 100,
+minHeight: -100,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+
+terrainPath.position.y += 5;
+scene.add(terrainPath);
+
+//terrainPath instance??? //////////////////////////////////////////////////////
+var pathImage = new Image();
+pathImage.src = pathdataurl002;
+
+//debug with :: pathdataurl002 : sanddataurl
+var sandTexture = new THREE.ImageUtils.loadTexture(sanddataurl);
+
+
+//LIGHT BLUE #798cb3
+//DARK BLUE 0x335599
+//CORAL #ff7f50
+var xS = 63, yS = 63;
+terrainPath = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 1.5,
+heightmap: pathImage,
+//heightmap: customInfluences,
+//material: new THREE.MeshBasicMaterial({map:sandTexture}),
+//light off blue
+material: new THREE.MeshBasicMaterial({color: 0x335599}),
+//map: grassImage,
+maxHeight: 100,
+minHeight: -105,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+
+terrainPath.position.y += 5;
+scene.add(terrainPath);
+
+//terrainDeck//////////////////////////////////////////////////////
+
+
+var deckImage = new Image();
+deckImage.src = "data:image/png;base64,"+deckdataurl003;
+
+//debug with :: deckdataurl : sanddataurl
+var deckTexture = new THREE.ImageUtils.loadTexture(forestdataurl);
+
+var xS = 63, yS = 63;
+terrainDeck = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 12.5,
+heightmap: deckImage,
+//heightmap: customInfluences,
+//material: new THREE.MeshBasicMaterial({map:deckTexture}),
+material: new THREE.MeshBasicMaterial({color: 0x52361b}),
+//map: grassImage,
+maxHeight: -15,
+minHeight: -112,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+
+terrainDeck.position.y += 11;
+
+//terrainDeck.geometry = new THREE.BoxBufferGeometry(100,100,1000).toNonIndexed();
+
+scene.add(terrainDeck);
+
+//CLIPPING DECK ///////////////////////////////////////////////
+
+//var localPlane = new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), 1 );
+//var globalPlane = new THREE.Plane( new THREE.Vector3( 0, 10, 0 ), 1 );
+// ??? //globalPlane.material = new THREE.MeshBasicMaterial({color: 0xff0000});
+
+//renderer.clippingPlanes = [ globalPlane ];
+//renderer.localClippingEnabled = true;
+
+/*
+var material = new THREE.MeshNormalMaterial( {
+clippingPlanes: [ localPlane ],
+//clipShadows: true
+} );
+*/
+
+/////////////////////////////////////////////////////////
+//INTERESTING RAMP GEOMETRY
+/*
+var xS = 63, yS = 1;
+terrainDeck = THREE.Terrain({
+easing: THREE.Terrain.Linear,
+frequency: 2.5,
+heightmap: deckImage,
+//heightmap: customInfluences,
+material: new THREE.MeshBasicMaterial({map:deckTexture}),
+//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
+//map: grassImage,
+maxHeight: 50,
+minHeight: -100,
+steps: 1,
+useBufferGeometry: false,
+xSegments: xS,
+xSize: 1024,
+ySegments: yS,
+ySize: 1024,
+});
+*/
+//////////////////////////////////////////////////////////////////
+// Optional:
+// Get the geometry of the terrain across which you want to scatter meshes
+var geo = terrainScene.children[0].geometry;
+// Add randomly distributed foliage
+decoScene = THREE.Terrain.ScatterMeshes(geo, {
+mesh: new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 12, 6)),
+w: xS,
+h: yS,
+spread: 0.02,
+randomness: Math.random,
+});
+
+//terrainScene.add(decoScene);
+
+
+// ADD BOXES AS LADDER ////////////////////////////////////////////////////////////////
+/* var boxGeometry = new THREE.BoxBufferGeometry( 20, 20, 200 ).toNonIndexed();
+
+position = boxGeometry.attributes.position;
+
+for ( let i = 0; i < 20; i ++ ) {
+
+	const box = new THREE.Mesh( boxGeometry );
+	box.position.x = 400 + Math.floor( Math.random() * 10 - 10 ) * 10;
+	box.position.y = -100 + Math.floor( Math.random() * 10 ) * 10 + 10;
+	//box.position.z = -200 + Math.floor( Math.random() * 10 - 10 ) * 10;
+
+	scene.add( box );
+	objects.push( box );
+
+} */
+
+// DECK TEST //////////////////////////////////////////////////////////////
+var geometry = new THREE.BoxBufferGeometry(100, 30, 500).toNonIndexed();
+//var pos = geometry.attributes.position;
+var material = new THREE.MeshBasicMaterial({color: 0x860081});
+var cube = new THREE.Mesh(geometry, material);
+
+cube.position.x =250;
+cube.position.y =-20;
+cube.position.z =0;
+
+scene.add(cube);
+objects.push( cube );
+
+var geometry02 = new THREE.BoxBufferGeometry(200, 30, 3500).toNonIndexed(); var material = new THREE.MeshBasicMaterial({color: 0xffffff}); var cube = new THREE.Mesh(geometry02, material); cube.position.set(50,-700,-100); cube.rotation.set(0,0,0); scene.add(cube); objects.push( cube );
+
 //VIGNETTE OVERLAY///////////////////////////////////////
 /*
 const shaderVignette = THREE.VignetteShader;
@@ -535,223 +754,6 @@ var outlineMesh3 = new THREE.Mesh( cbBox, outlineMaterial3 );
 	scene.add( DiceBlue );	
 */
 
-//HEIGHTMAPS//////////////////////////////////////////////////////////////////////
-
-var heightmapImage = new Image();
-heightmapImage.src = mindataurl;
-
-var grassImage = new Image();
-grassImage.src = grassdataurl;
-
-var grassTexture = new THREE.ImageUtils.loadTexture(forestdataurl);//was grassdataurl
-
-// Remove a terrain
-//scene.remove(terrainScene);
-
-// Generate a terrain
-var xS = 63, yS = 63;
-
-terrainScene = THREE.Terrain({
-easing: THREE.Terrain.Linear,
-frequency: 2.5,
-heightmap: heightmapImage,
-//heightmap: customInfluences,
-material: new THREE.MeshBasicMaterial({map:grassTexture}),
-//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
-map: grassImage,
-maxHeight: 100,
-minHeight: -100,
-steps: 1,
-useBufferGeometry: false,
-xSegments: xS,
-xSize: 1024,
-ySegments: yS,
-ySize: 1024,
-});
-scene.add(terrainScene);
-
-//terrainPath//////////////////////////////////////////////////////
-var pathImage = new Image();
-pathImage.src = pathdataurl002;
-
-//debug with :: pathdataurl002 : sanddataurl
-var sandTexture = new THREE.ImageUtils.loadTexture(forestdataurl);// was sanddataurl
-
-var xS = 40, yS = 40;
-terrainPath = THREE.Terrain({
-easing: THREE.Terrain.Linear,
-frequency: 2.5,
-heightmap: pathImage,
-//heightmap: customInfluences,
-material: new THREE.MeshBasicMaterial({map:sandTexture}),
-//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
-//map: grassImage,
-maxHeight: 100,
-minHeight: -100,
-steps: 1,
-useBufferGeometry: false,
-xSegments: xS,
-xSize: 1024,
-ySegments: yS,
-ySize: 1024,
-});
-
-terrainPath.position.y += 5;
-scene.add(terrainPath);
-
-//terrainPath instance??? //////////////////////////////////////////////////////
-var pathImage = new Image();
-pathImage.src = pathdataurl002;
-
-//debug with :: pathdataurl002 : sanddataurl
-var sandTexture = new THREE.ImageUtils.loadTexture(sanddataurl);
-
-
-//LIGHT BLUE #798cb3
-//DARK BLUE 0x335599
-//CORAL #ff7f50
-var xS = 63, yS = 63;
-terrainPath = THREE.Terrain({
-easing: THREE.Terrain.Linear,
-frequency: 1.5,
-heightmap: pathImage,
-//heightmap: customInfluences,
-//material: new THREE.MeshBasicMaterial({map:sandTexture}),
-//light off blue
-material: new THREE.MeshBasicMaterial({color: 0x335599}),
-//map: grassImage,
-maxHeight: 100,
-minHeight: -105,
-steps: 1,
-useBufferGeometry: false,
-xSegments: xS,
-xSize: 1024,
-ySegments: yS,
-ySize: 1024,
-});
-
-terrainPath.position.y += 5;
-scene.add(terrainPath);
-
-//terrainDeck//////////////////////////////////////////////////////
-
-
-var deckImage = new Image();
-deckImage.src = "data:image/png;base64,"+deckdataurl003;
-
-//debug with :: deckdataurl : sanddataurl
-var deckTexture = new THREE.ImageUtils.loadTexture(forestdataurl);
-
-var xS = 63, yS = 63;
-terrainDeck = THREE.Terrain({
-easing: THREE.Terrain.Linear,
-frequency: 12.5,
-heightmap: deckImage,
-//heightmap: customInfluences,
-//material: new THREE.MeshBasicMaterial({map:deckTexture}),
-material: new THREE.MeshBasicMaterial({color: 0x52361b}),
-//map: grassImage,
-maxHeight: -15,
-minHeight: -112,
-steps: 1,
-useBufferGeometry: false,
-xSegments: xS,
-xSize: 1024,
-ySegments: yS,
-ySize: 1024,
-});
-
-terrainDeck.position.y += 11;
-
-//terrainDeck.geometry = new THREE.BoxBufferGeometry(100,100,1000).toNonIndexed();
-
-scene.add(terrainDeck);
-
-//CLIPPING DECK ///////////////////////////////////////////////
-
-//var localPlane = new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), 1 );
-//var globalPlane = new THREE.Plane( new THREE.Vector3( 0, 10, 0 ), 1 );
-// ??? //globalPlane.material = new THREE.MeshBasicMaterial({color: 0xff0000});
-
-//renderer.clippingPlanes = [ globalPlane ];
-//renderer.localClippingEnabled = true;
-
-/*
-var material = new THREE.MeshNormalMaterial( {
-clippingPlanes: [ localPlane ],
-//clipShadows: true
-} );
-*/
-
-/////////////////////////////////////////////////////////
-//INTERESTING RAMP GEOMETRY
-/*
-var xS = 63, yS = 1;
-terrainDeck = THREE.Terrain({
-easing: THREE.Terrain.Linear,
-frequency: 2.5,
-heightmap: deckImage,
-//heightmap: customInfluences,
-material: new THREE.MeshBasicMaterial({map:deckTexture}),
-//material: new THREE.MeshBasicMaterial({color: 0xFF2200}),
-//map: grassImage,
-maxHeight: 50,
-minHeight: -100,
-steps: 1,
-useBufferGeometry: false,
-xSegments: xS,
-xSize: 1024,
-ySegments: yS,
-ySize: 1024,
-});
-*/
-//////////////////////////////////////////////////////////////////
-// Optional:
-// Get the geometry of the terrain across which you want to scatter meshes
-var geo = terrainScene.children[0].geometry;
-// Add randomly distributed foliage
-decoScene = THREE.Terrain.ScatterMeshes(geo, {
-mesh: new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 12, 6)),
-w: xS,
-h: yS,
-spread: 0.02,
-randomness: Math.random,
-});
-
-//terrainScene.add(decoScene);
-
-
-// ADD BOXES AS LADDER ////////////////////////////////////////////////////////////////
-/* var boxGeometry = new THREE.BoxBufferGeometry( 20, 20, 200 ).toNonIndexed();
-
-position = boxGeometry.attributes.position;
-
-for ( let i = 0; i < 20; i ++ ) {
-
-	const box = new THREE.Mesh( boxGeometry );
-	box.position.x = 400 + Math.floor( Math.random() * 10 - 10 ) * 10;
-	box.position.y = -100 + Math.floor( Math.random() * 10 ) * 10 + 10;
-	//box.position.z = -200 + Math.floor( Math.random() * 10 - 10 ) * 10;
-
-	scene.add( box );
-	objects.push( box );
-
-} */
-
-// DECK TEST //////////////////////////////////////////////////////////////
-var geometry = new THREE.BoxBufferGeometry(100, 30, 500).toNonIndexed();
-//var pos = geometry.attributes.position;
-var material = new THREE.MeshBasicMaterial({color: 0x860081});
-var cube = new THREE.Mesh(geometry, material);
-
-cube.position.x =250;
-cube.position.y =-20;
-cube.position.z =0;
-
-scene.add(cube);
-objects.push( cube );
-
-var geometry02 = new THREE.BoxBufferGeometry(200, 30, 3500).toNonIndexed(); var material = new THREE.MeshBasicMaterial({color: 0xffffff}); var cube = new THREE.Mesh(geometry02, material); cube.position.set(50,-700,-100); cube.rotation.set(0,0,0); scene.add(cube); objects.push( cube );
 
 //CLONE & REPOSITION
 ////////////////////////////////////////////////////////////////
