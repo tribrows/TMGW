@@ -108,13 +108,16 @@ if (canJump === true) velocity.y += 450;
   console.log("canJump");
 }
 */
+ 
 
 function openFullscreen() {
     playScreen();
 	hideVideo();
-      //var canvas = document.getElementById("playcanvas");
-      var elem = document.getElementsByTagName("canvas")[0];
-
+    
+    controls.lock();
+    
+   //var canvas = document.getElementById("playcanvas");
+      var elem = document.getElementsByTagName("canvas")[1];
 	//blocker.style.display = 'block'; //block
         //instructions.style.display = ''; //""
 
@@ -486,9 +489,9 @@ var imagePrefix = "./images/bg04";
 	var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
 	scene.add( skyBox );
     
-//var light = new THREE.PointLight(0xffffff);
-//	light.position.set(0,450,0);
-//	scene.add(light);
+var light = new THREE.PointLight(0xffffff);
+	light.position.set(0,450,0);
+	scene.add(light);
 
 
 //PLAYER START POSITION ///////////////////////////////////////
