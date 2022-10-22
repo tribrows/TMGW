@@ -102,9 +102,9 @@ scene.background = new THREE.Color(0x555555);
 //purple fog
 scene.fog = new THREE.FogExp2(0x860081, 0.003);
 
-var renderer = new THREE.WebGLRenderer( { canvas: playCanvas, antialias: false } );
-renderer.setSize(800, 600);
-playCanvas = document.getElementById('playCanvas')
+//var playCanvas = document.getElementById('playCanvas')
+var renderer = new THREE.WebGLRenderer( { canvas: playCanvas } );
+renderer.setSize(1000, 600);
 
 aspr = 1.0;
 //camera = new THREE.PerspectiveCamera(50, aspr, 10, 11000);
