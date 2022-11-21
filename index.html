@@ -289,8 +289,8 @@ frequency: 1.5,
 heightmap: pathImage,
 //heightmap: customInfluences,
 //material: new THREE.MeshBasicMaterial({map:waterTexture}),
-//material: new THREE.MeshBasicMaterial({color: 0x335599}),
-map: waterTexture,
+material: new THREE.MeshBasicMaterial({color: 0x335599}),
+//map: waterTexture,
 maxHeight: 100,
 minHeight: -105,
 steps: 1,
@@ -421,7 +421,18 @@ cube.position.z =0;
 scene.add(cube);
 objects.push( cube );
 
-var geometry02 = new THREE.BoxBufferGeometry(200, 30, 3500).toNonIndexed(); var material = new THREE.MeshBasicMaterial({color: 0xffffff}); var cube = new THREE.Mesh(geometry02, material); cube.position.set(50,-700,-100); cube.rotation.set(0,0,0); scene.add(cube); objects.push( cube );
+var geometry02 = new THREE.BoxBufferGeometry(200, 30, 3500).toNonIndexed(); 
+    var material = new THREE.MeshBasicMaterial({color: 0x52361b}); 
+    var cube = new THREE.Mesh(geometry02, material); cube.position.set(50,-700,-100); 
+    cube.rotation.set(0,0,0); 
+    scene.add(cube); 
+    objects.push( cube );
+    
+cube.position.set(0,-30,250); 
+cube.rotation.set(0,120,0); 
+scene.add(cube);
+objects.push( cube );
+
     
 //FLIP MESH///////////////////////////////////////
 
