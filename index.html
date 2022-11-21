@@ -247,15 +247,49 @@ var sandTexture = new THREE.ImageUtils.loadTexture(sanddataurl);
 //var waterImage = new Image();
 //waterImage.src = "./images/water.jpg";
 //var waterTexture = new THREE.ImageUtils.loadTexture(waterImage);
-//    
+var waterTexture = new THREE.ImageUtils.loadTexture( 'images/water.jpg' ); 
+
+//ANIMATED WATERFALL
+//    var waterTexture = new THREE.ImageUtils.loadTexture( 'images/water.jpg' );
+//	waterTexture.wrapS = waterTexture.wrapT = THREE.RepeatWrapping; 
+//	
+//	// use "this." to create global object
+//	this.customUniforms2 = {
+//		baseTexture: 	{ type: "t", value: waterTexture },
+//		baseSpeed: 		{ type: "f", value: 1.15 },
+//		noiseTexture: 	{ type: "t", value: noiseTexture },
+//		noiseScale:		{ type: "f", value: 0.2 },
+//		alpha: 			{ type: "f", value: 0.8 },
+//		time: 			{ type: "f", value: 1.0 }
+//	};
+//
+//	// create custom material from the shader code above
+//	//   that is within specially labeled script tags
+//	var customMaterial2 = new THREE.ShaderMaterial( 
+//	{
+//	    uniforms: customUniforms2,
+//		vertexShader:   document.getElementById( 'vertexShader'   ).textContent,
+//		fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+//	}   );
+// 
+//	// other material properties
+//	customMaterial2.side = THREE.DoubleSide;
+//	customMaterial2.transparent = true;
+//	
+//	// apply the material to a surface
+//	var flatGeometry = new THREE.PlaneGeometry( 100, 100 );
+//    var surface = new THREE.Mesh( flatGeometry, customMaterial2 );
+//	surface.position.set(60,50,150);
+//	scene.add( surface );	
+    
 var xS = 63, yS = 63;
 terrainPath = THREE.Terrain({
 easing: THREE.Terrain.Linear,
 frequency: 1.5,
 heightmap: pathImage,
 //heightmap: customInfluences,
-//material: new THREE.MeshBasicMaterial({map:waterTexture}),
-material: new THREE.MeshBasicMaterial({color: 0x335599}),
+material: new THREE.MeshBasicMaterial({map:waterTexture}),
+//material: new THREE.MeshBasicMaterial({color: 0x335599}),
 //map: grassImage,
 maxHeight: 100,
 minHeight: -105,
