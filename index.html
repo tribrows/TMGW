@@ -243,18 +243,19 @@ var sandTexture = new THREE.ImageUtils.loadTexture(sanddataurl);
 //LIGHT BLUE #798cb3
 //DARK BLUE 0x335599
 //CORAL #ff7f50
-var waterImage = new Image();
-waterImage.src = "./images/water.jpg";
-var waterTexture = new THREE.ImageUtils.loadTexture(waterImage);
     
+//var waterImage = new Image();
+//waterImage.src = "./images/water.jpg";
+//var waterTexture = new THREE.ImageUtils.loadTexture(waterImage);
+//    
 var xS = 63, yS = 63;
 terrainPath = THREE.Terrain({
 easing: THREE.Terrain.Linear,
 frequency: 1.5,
 heightmap: pathImage,
 //heightmap: customInfluences,
-material: new THREE.MeshBasicMaterial({map:waterTexture}),
-//material: new THREE.MeshBasicMaterial({color: 0x335599}),
+//material: new THREE.MeshBasicMaterial({map:waterTexture}),
+material: new THREE.MeshBasicMaterial({color: 0x335599}),
 //map: grassImage,
 maxHeight: 100,
 minHeight: -105,
