@@ -243,14 +243,18 @@ var sandTexture = new THREE.ImageUtils.loadTexture(sanddataurl);
 //LIGHT BLUE #798cb3
 //DARK BLUE 0x335599
 //CORAL #ff7f50
+var waterImage = new Image();
+waterImage.src = "./images/water.jpg";
+var waterTexture = new THREE.ImageUtils.loadTexture(waterImage);
+    
 var xS = 63, yS = 63;
 terrainPath = THREE.Terrain({
 easing: THREE.Terrain.Linear,
 frequency: 1.5,
 heightmap: pathImage,
 //heightmap: customInfluences,
-//material: new THREE.MeshBasicMaterial({map:sandTexture}),
-material: new THREE.MeshBasicMaterial({color: 0x335599}),
+material: new THREE.MeshBasicMaterial({map:waterTexture}),
+//material: new THREE.MeshBasicMaterial({color: 0x335599}),
 //map: grassImage,
 maxHeight: 100,
 minHeight: -105,
@@ -520,7 +524,7 @@ text.position.set(-100,200,-150);
 scene.add( text );
 render();
 } );
-    /*
+    
 var loader4 = new THREE.GLTFLoader();
 loader4.load( './models/kitchen/kitchen04.glb', function ( gltf ) {
 
@@ -532,7 +536,7 @@ kitchen.position.set(0,0,0);
 scene.add( kitchen);
 render();
 } );
-*/
+
 
     /*
 var loader5 = new THREE.GLTFLoader();
