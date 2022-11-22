@@ -581,7 +581,7 @@ render();
 } );
     
 var loader4 = new THREE.GLTFLoader();
-loader4.load( './models/kitchen/kitchen04.glb', function ( gltf ) {
+loader4.load( './models/kitchen/kitchen05.glb', function ( gltf ) {
 
 var kitchen = gltf.scene;
 kitchen.scale.set(500*kitchen.scale.x, 500*kitchen.scale.y, 500*kitchen.scale.z)
@@ -629,7 +629,8 @@ clock = new THREE.Clock(false);
 
 	// STAR//////////////
 	
-/*	var starPoints = [];
+///*	
+var starPoints = [];
 	
 	starPoints.push( new THREE.Vector2 (   0,  50 ) );
 	starPoints.push( new THREE.Vector2 (  10,  10 ) );
@@ -663,7 +664,7 @@ var star = new THREE.Mesh( starGeometry, starMaterial );
 	star.position.set(-202,60,-331);
 	//star.rotation.set(90)
 	scene.add(star);
-*/
+//*/
 
 // MERGING
 /*
@@ -855,7 +856,7 @@ renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%)
 
     raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
 
-/*           
+///*           
     //////////////////////////BOXES//////////////////////////
     let floorGeometry = new THREE.PlaneBufferGeometry( 1000, 1000, 0, 0 );
 			floorGeometry.rotateX( - Math.PI / 2 );
@@ -924,7 +925,7 @@ renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(220%)
 				//scene.add( box );
 				objects.push( box );    
 				}     
-    */
+    //*/
 
 
 function flipMesh(object3D) {
