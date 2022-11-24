@@ -443,6 +443,24 @@ cube.position.z =100;
 scene.add(cube);
 objects.push( cube );
     
+    var geometry04 = new THREE.BoxBufferGeometry(2100, 30, 800).toNonIndexed(); 
+    var material = new THREE.MeshBasicMaterial({color: 0xFF0000}); 
+    var cube = new THREE.Mesh(geometry04, material); 
+cube.position.x =700;
+cube.position.y =380;
+cube.position.z =-1400;
+
+scene.add(cube);
+objects.push( cube );
+    
+    //AMBIENT LIGHT
+    
+var ambient = new THREE.AmbientLight( 0x555555 );
+scene.add(ambient);
+ambient.position.x =1000;
+ambient.position.y =780;
+ambient.position.z =-1400;
+    
 //FLIP MESH///////////////////////////////////////
 
 var geo = terrainScene.children[0].geometry;
@@ -499,7 +517,7 @@ var imagePrefix = "./images/bg04";
 	for (var i = 0; i < 6; i++)
 		materialArray.push( new THREE.MeshBasicMaterial({
 			map: THREE.ImageUtils.loadTexture( imagePrefix + imageSuffix ) , /* + directions[i] + */
-			side: THREE.SingleSide
+			side: THREE.DoubleSide
 		}));
 	var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
 	var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
@@ -587,7 +605,7 @@ var kitchen = gltf.scene;
 kitchen.scale.set(500*kitchen.scale.x, 500*kitchen.scale.y, 500*kitchen.scale.z)
 
 //kitchen.rotation.y = 360;
-kitchen.position.set(-1902,-60,-1931);
+kitchen.position.set(-1902,-100,-1931);
 scene.add( kitchen);
 render();
 } );
