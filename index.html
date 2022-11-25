@@ -444,7 +444,7 @@ scene.add(cube);
 objects.push( cube );
     
     var geometry04 = new THREE.BoxBufferGeometry(2100, 30, 800).toNonIndexed(); 
-    var material = new THREE.MeshBasicMaterial({color: 0xFF0000}); 
+    var material = new THREE.MeshBasicMaterial({color: 0x00FFFF}); 
     var cube = new THREE.Mesh(geometry04, material); 
 cube.position.x =700;
 cube.position.y =380;
@@ -455,7 +455,7 @@ objects.push( cube );
     
     //AMBIENT LIGHT
     
-var ambient = new THREE.AmbientLight( 0x555555 );
+var ambient = new THREE.AmbientLight( 0x00FFFF );
 scene.add(ambient);
 ambient.position.x =1000;
 ambient.position.y =780;
