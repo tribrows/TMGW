@@ -682,21 +682,62 @@ var star = new THREE.Mesh( starGeometry, starMaterial );
 	//star.rotation.set(90)
 	scene.add(star);
  
-////////TRIGGER NEW SCENE//
+////////TRIGGER NEW SCENES :: KITCHEN :: ////////////////////////////////////////////////
     
     // ATTACH TRIGGER TO STAR + CAMERA
+    //trigger star/camera collision
     
+    loadKitchenScene();
     
+    function loadKitchenScene() {
     // HIDE ALL INTERNAL BOX ELEMENTS
     
     
     // ON DEMAND LOAD KITCHEN + ELEMENTS
     
+    //KITCHEN FLOOR
+    var floorGeometry1 = new THREE.PlaneGeometry(10000, 10000, 10, 10);
+	var floor1 = new THREE.Mesh(floorGeometry1, floorMaterial );
+	floor1.position.y = -50;
+  floor1.position.z = 2250;
+	floor1.rotation.x = Math.PI /4;
+	scene.add(floor1);  
+
+    
+    //KITCHEN WALLS
+				//from island right
+		var wall01 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall01.rotation.y = Math.PI / 2;
+            wall01.rotation.x = Math.PI / 2;
+            wall01.position.x = -2000;
+				//
+        var wall02 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall01.rotation.x = Math.PI;
+            wall01.position.z = 2000;
+
+        var wall03 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall03.rotation.x = Math.PI ;
+            wall03.position.z = 2000;
+
+        var wall04 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall04.rotation.x = Math.PI * 4;
+            wall04.position.z = -2000;
+
+scene.add(wall01,wall02,wall03,wall04);  
+    
     
     // MOVE BALLOONS, MERCH FLOOD WATER + OPEN BOX LID
     
 
+    //MOVE TO ISLAND TOP + REMOVE FOG
     
+    scene.fog = '';
+    camera.position.set(302,410,-1200);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+        
+    //scene.remove(floor1,wall01,wall02,wall03,wall04);
+    //close kitchen scene
+    };
     ////////////////////////////////////////
 //*/
 
