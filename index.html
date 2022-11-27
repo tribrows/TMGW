@@ -168,6 +168,13 @@ function openFullscreen() {
 	
 
     }
+    
+function rotateObject(object, degreeX=0, degreeY=0, degreeZ=0) {
+   object.rotateX(THREE.Math.degToRad(degreeX));
+   object.rotateY(THREE.Math.degToRad(degreeY));
+   object.rotateZ(THREE.Math.degToRad(degreeZ));
+}
+
 //HEIGHTMAPS///////////////////////////////////////////////////////
 
 var heightmapImage = new Image();
@@ -598,17 +605,6 @@ scene.add( text );
 render();
 } );
     
-var loader4 = new THREE.GLTFLoader();
-loader4.load( './models/kitchen/kitchen08.glb', function ( gltf ) {
-
-var kitchen = gltf.scene;
-kitchen.scale.set(500*kitchen.scale.x, 500*kitchen.scale.y, 500*kitchen.scale.z)
-
-//kitchen.rotation.y = 360;
-kitchen.position.set(-1902,-100,-1931);
-scene.add( kitchen);
-render();
-} );
 
 
     /*
@@ -678,53 +674,72 @@ var materialSide = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
 var star = new THREE.Mesh( starGeometry, starMaterial );
 	//var wireframeTexture = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } ); 
 	//var star = new THREE.Mesh( starGeometry, wireframeTexture );
-	star.position.set(-102,90,131);
+	//star.position.set(-102,90,231);
+    star.position.set(250,50,131);
 	//star.rotation.set(90)
 	scene.add(star);
  
-////////TRIGGER NEW SCENES :: KITCHEN :: ////////////////////////////////////////////////
+////////TRIGGER NEW SCENES :: KITCHEN //////
+    //ADMIN SHORTCUTS :: SCENE NUMBERS :: 0 MENU
     
     // ATTACH TRIGGER TO STAR + CAMERA
     //trigger star/camera collision
     
-    loadKitchenScene();
+    //loadKitchenScene();
+function removeEntity(object) {
+    var selectedObject = scene.getObjectByName(object.name);
+    scene.remove( selectedObject );
+    animate();
+}
     
-    function loadKitchenScene() {
-    // HIDE ALL INTERNAL BOX ELEMENTS
-    
+function loadKitchenScene() {
+    // REMOVE ALL INTERNAL BOX ELEMENTS
+    removeEntity(floor1); 
     
     // ON DEMAND LOAD KITCHEN + ELEMENTS
-    
+var loader4 = new THREE.GLTFLoader();
+loader4.load( './models/kitchen/kitchen08.glb', function ( gltf ) {
+
+var kitchen = gltf.scene;
+kitchen.scale.set(500*kitchen.scale.x, 500*kitchen.scale.y, 500*kitchen.scale.z)
+
+//kitchen.rotation.y = 360;
+kitchen.position.set(-1902,-100,-1931);
+scene.add( kitchen);
+render();
+} );
+
     //KITCHEN FLOOR
     var floorGeometry1 = new THREE.PlaneGeometry(10000, 10000, 10, 10);
 	var floor1 = new THREE.Mesh(floorGeometry1, floorMaterial );
-	floor1.position.y = -50;
-  floor1.position.z = 2250;
-	floor1.rotation.x = Math.PI /4;
+	floor1.position.y = 3000;
+        
+    //floor1.position.z = 3000;
+	//floor1.rotation.x = Math.PI /4;
 	scene.add(floor1);  
-
+    rotateObject(floor1, 40, 30, 20);
     
     //KITCHEN WALLS
 				//from island right
 		var wall01 =  new THREE.Mesh(floorGeometry1, floorMaterial );
             wall01.rotation.y = Math.PI / 2;
             wall01.rotation.x = Math.PI / 2;
-            wall01.position.x = -2000;
+            wall01.position.x = -3000;
 				//
         var wall02 =  new THREE.Mesh(floorGeometry1, floorMaterial );
             wall01.rotation.x = Math.PI;
-            wall01.position.z = 2000;
+            wall01.position.z = 3000;
 
         var wall03 =  new THREE.Mesh(floorGeometry1, floorMaterial );
             wall03.rotation.x = Math.PI ;
-            wall03.position.z = 2000;
+            wall03.position.z = 3000;
 
         var wall04 =  new THREE.Mesh(floorGeometry1, floorMaterial );
             wall04.rotation.x = Math.PI * 4;
-            wall04.position.z = -2000;
+            wall04.position.z = -3000;
 
 scene.add(wall01,wall02,wall03,wall04);  
-    
+
     
     // MOVE BALLOONS, MERCH FLOOD WATER + OPEN BOX LID
     
@@ -738,6 +753,7 @@ scene.add(wall01,wall02,wall03,wall04);
     //scene.remove(floor1,wall01,wall02,wall03,wall04);
     //close kitchen scene
     };
+
     ////////////////////////////////////////
 //*/
 
