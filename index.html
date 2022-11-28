@@ -96,7 +96,13 @@ var VRButton = "";
 var controls = "";
 
 var playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water, blocker, instructions, play, learn, action;
+    //RAYCASTER ////////////////////////////////////////////////
+    		var INTERSECTED;
+			var theta = 0;
 
+			var pointer = new THREE.Vector2();
+			var radius = 100;
+    /////////////////////////////////////////////////////////
 scene = new THREE.Scene();
 scene.background = new THREE.Color(0x555555);
 //purple fog
@@ -544,15 +550,6 @@ scene.add(camera);
 camera.lookAt(new THREE.Vector3(-250, -150, -2550));
 
 
-document.addEventListener('mousedown', onMouseDown, false);
-
-function onMouseDown(event){
-   console.log("Scroll, Fire or Jump");
-//Scroll Options//Inventory
-//Left Mouse Fire
-//Right Mouse Jump
-}
-
 //SETUP THREEJS
 function setupThreeJS() {
 
@@ -682,10 +679,36 @@ var star = new THREE.Mesh( starGeometry, starMaterial );
 ////////TRIGGER NEW SCENES :: KITCHEN //////
     //ADMIN SHORTCUTS :: SCENE NUMBERS :: 0 MENU
     
-    // ATTACH TRIGGER TO STAR + CAMERA
-    //trigger star/camera collision
+    // ATTACH TRIGGER//RAYCASTER TO STAR + CAMERA
+    
+    //RAYCASTER ////////////////////////////////////////////////
+    	/*	document.addEventListener( 'mousemove', onPointerMove );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function onPointerMove( event ) {
+
+				pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			}*/
+    /////////////////////////////////////////////////////////
     
     //loadKitchenScene();
+    
 function removeEntity(object) {
     var selectedObject = scene.getObjectByName(object.name);
     scene.remove( selectedObject );
@@ -1093,6 +1116,42 @@ function render() {
 	else
 		composer.render();
 */
+    //RAYCASTER////////////////////////////////////////////
+   /* theta += 0.1;
+
+				camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
+				camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
+				camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
+				camera.lookAt( scene.position );
+
+				camera.updateMatrixWorld();
+
+				// find intersections
+
+				raycaster.setFromCamera( pointer, camera );
+
+				const intersects = raycaster.intersectObjects( scene.children, false );
+
+				if ( intersects.length > 0 ) {
+
+					if ( INTERSECTED != intersects[ 0 ].object ) {
+
+						if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+						INTERSECTED = intersects[ 0 ].object;
+						INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+						INTERSECTED.material.emissive.setHex( 0xff0000 );
+
+					}
+
+				} else {
+
+					if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+					INTERSECTED = null;
+
+				}*/
+    ///////////////////////////////////////////////////////////////////
 }
 
 function hideVideo(){
@@ -1153,6 +1212,18 @@ function setup() {
 setupThreeJS();
 //setupWorld();
 
+}
+
+document.addEventListener('mousedown', onMouseDown, false);
+
+function onMouseDown(event){
+   console.log("Scroll, Fire or Jump");
+//Scroll Options//Inventory
+//Left Mouse Fire
+//Right Mouse Jump
+    
+    //raycasting :: if star material = red
+    loadKitchenScene();
 }
 
 </script>
