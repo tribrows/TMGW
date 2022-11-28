@@ -425,46 +425,51 @@ for ( let i = 0; i < 20; i ++ ) {
 var geometry = new THREE.BoxBufferGeometry(100, 30, 500).toNonIndexed();
 //var pos = geometry.attributes.position;
 var material = new THREE.MeshBasicMaterial({color: 0x335599});
-var cube = new THREE.Mesh(geometry, material);
+var deck01 = new THREE.Mesh(geometry, material);
 
-cube.position.x =250;
-cube.position.y =-20;
-cube.position.z =0;
-
-scene.add(cube);
-objects.push( cube );
+deck01.position.x =250;
+deck01.position.y =-20;
+deck01.position.z =0;
+deck01.name ="deck01";
+scene.add(deck01);
+objects.push( deck01 );
 
 var geometry02 = new THREE.BoxBufferGeometry(200, 30, 500).toNonIndexed(); 
     var material = new THREE.MeshBasicMaterial({color: 0x52361b}); 
-    var cube = new THREE.Mesh(geometry02, material); cube.position.set(50,-700,-100); 
-    cube.rotation.set(0,0,0); 
-    scene.add(cube); 
-    objects.push( cube );
-    
-cube.position.set(0,-30,250); 
-cube.rotation.set(0,120,0); 
-scene.add(cube);
-objects.push( cube );
+    var deck02 = new THREE.Mesh(geometry02, material); deck02.position.set(50,-700,-100); 
+    deck02.rotation.set(0,0,0);
+    deck02.name ="deck02";
+    scene.add(deck02); 
+    objects.push( deck02 );
+
+var geometry02 = new THREE.BoxBufferGeometry(200, 30, 500).toNonIndexed(); 
+    var material = new THREE.MeshBasicMaterial({color: 0x52361b}); 
+    var deck03 = new THREE.Mesh(geometry02, material); 
+deck03.position.set(0,-30,250); 
+deck03.rotation.set(0,120,0);
+deck03.name ="deck03";
+scene.add(deck03);
+objects.push( deck03 );
 
 var geometry03 = new THREE.BoxBufferGeometry(200, 30, 500).toNonIndexed(); 
     var material = new THREE.MeshBasicMaterial({color: 0x52361b}); 
-    var cube = new THREE.Mesh(geometry02, material); 
-cube.position.x =-150;
-cube.position.y =10;
-cube.position.z =100;
-
-scene.add(cube);
-objects.push( cube );
+    var deck04 = new THREE.Mesh(geometry02, material); 
+deck04.position.x =-150;
+deck04.position.y =10;
+deck04.position.z =100;
+deck04.name ="deck04";
+scene.add(deck04);
+objects.push( deck04 );
     
     var geometry04 = new THREE.BoxBufferGeometry(2100, 30, 800).toNonIndexed(); 
     var material = new THREE.MeshBasicMaterial({color: 0x00FFFF}); 
-    var cube = new THREE.Mesh(geometry04, material); 
-cube.position.x =700;
-cube.position.y =380;
-cube.position.z =-1400;
-
-scene.add(cube);
-objects.push( cube );
+    var island = new THREE.Mesh(geometry04, material); 
+island.position.x =700;
+island.position.y =380;
+island.position.z =-1400;
+island.name ="island";
+scene.add(island);
+objects.push( island );
     
     //AMBIENT LIGHT
     
@@ -669,11 +674,12 @@ var materialSide = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
 	var starMaterial = new THREE.MeshFaceMaterial(materialArray);
 	
 var star = new THREE.Mesh( starGeometry, starMaterial );
+    star.name="star";
 	//var wireframeTexture = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } ); 
 	//var star = new THREE.Mesh( starGeometry, wireframeTexture );
-	//star.position.set(-102,90,231);
-    star.position.set(250,50,131);
-	//star.rotation.set(90)
+	star.position.set(-202,90,231);
+   //star.position.set(250,50,131);
+    star.rotation.y = Math.PI / 2;
 	scene.add(star);
  
 ////////TRIGGER NEW SCENES :: KITCHEN //////
@@ -707,75 +713,9 @@ var star = new THREE.Mesh( starGeometry, starMaterial );
 			}*/
     /////////////////////////////////////////////////////////
     
-    //loadKitchenScene();
     
-function removeEntity(object) {
-    var selectedObject = scene.getObjectByName(object.name);
-    scene.remove( selectedObject );
-    animate();
-}
-    
-function loadKitchenScene() {
-    // REMOVE ALL INTERNAL BOX ELEMENTS
-    removeEntity(floor1); 
-    
-    // ON DEMAND LOAD KITCHEN + ELEMENTS
-var loader4 = new THREE.GLTFLoader();
-loader4.load( './models/kitchen/kitchen08.glb', function ( gltf ) {
-
-var kitchen = gltf.scene;
-kitchen.scale.set(500*kitchen.scale.x, 500*kitchen.scale.y, 500*kitchen.scale.z)
-
-//kitchen.rotation.y = 360;
-kitchen.position.set(-1902,-100,-1931);
-scene.add( kitchen);
-render();
-} );
-
-    //KITCHEN FLOOR
-    var floorGeometry1 = new THREE.PlaneGeometry(10000, 10000, 10, 10);
-	var floor1 = new THREE.Mesh(floorGeometry1, floorMaterial );
-	floor1.position.y = 3000;
-        
-    //floor1.position.z = 3000;
-	//floor1.rotation.x = Math.PI /4;
-	scene.add(floor1);  
-    rotateObject(floor1, 40, 30, 20);
-    
-    //KITCHEN WALLS
-				//from island right
-		var wall01 =  new THREE.Mesh(floorGeometry1, floorMaterial );
-            wall01.rotation.y = Math.PI / 2;
-            wall01.rotation.x = Math.PI / 2;
-            wall01.position.x = -3000;
-				//
-        var wall02 =  new THREE.Mesh(floorGeometry1, floorMaterial );
-            wall01.rotation.x = Math.PI;
-            wall01.position.z = 3000;
-
-        var wall03 =  new THREE.Mesh(floorGeometry1, floorMaterial );
-            wall03.rotation.x = Math.PI ;
-            wall03.position.z = 3000;
-
-        var wall04 =  new THREE.Mesh(floorGeometry1, floorMaterial );
-            wall04.rotation.x = Math.PI * 4;
-            wall04.position.z = -3000;
-
-scene.add(wall01,wall02,wall03,wall04);  
-
-    
-    // MOVE BALLOONS, MERCH FLOOD WATER + OPEN BOX LID
     
 
-    //MOVE TO ISLAND TOP + REMOVE FOG
-    
-    scene.fog = '';
-    camera.position.set(302,410,-1200);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
-        
-    //scene.remove(floor1,wall01,wall02,wall03,wall04);
-    //close kitchen scene
-    };
 
     ////////////////////////////////////////
 //*/
@@ -867,8 +807,77 @@ instructions = document.getElementById('instructions');
 play = document.getElementById('play');
 };
     
-//??? CHANGE TO PLAY, LEARN, ACTION + REMOVE LISTENERS /////////////////////
+//??? CHANGE TO PLAY, LEARN, ACTION + REMOVE LISTENERS
     
+//END THREEJS SETUP ///////////////////
+    
+    function removeEntity(object) {
+    var selectedObject = scene.getObjectByName(object.name);
+    scene.remove( selectedObject );
+    animate();
+}
+    
+function loadKitchenScene() {
+    // REMOVE ALL INTERNAL BOX ELEMENTS
+    //removeEntity(floor1); 
+    
+    // ON DEMAND LOAD KITCHEN + ELEMENTS
+var loader4 = new THREE.GLTFLoader();
+loader4.load( './models/kitchen/kitchen08.glb', function ( gltf ) {
+
+var kitchen = gltf.scene;
+kitchen.scale.set(500*kitchen.scale.x, 500*kitchen.scale.y, 500*kitchen.scale.z)
+
+//kitchen.rotation.y = 360;
+kitchen.position.set(-1902,-100,-1931);
+scene.add( kitchen);
+render();
+} );
+
+    //KITCHEN FLOOR
+    var floorGeometry1 = new THREE.PlaneGeometry(10000, 10000, 10, 10);
+	var floor1 = new THREE.Mesh(floorGeometry1, floorMaterial );
+	floor1.position.y = 3000;
+        
+    //floor1.position.z = 3000;
+	//floor1.rotation.x = Math.PI /4;
+	scene.add(floor1);  
+    rotateObject(floor1, 40, 30, 20);
+    
+    //KITCHEN WALLS
+				//from island right
+		var wall01 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall01.rotation.y = Math.PI / 2;
+            wall01.rotation.x = Math.PI / 2;
+            wall01.position.x = -3000;
+				//
+        var wall02 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall01.rotation.x = Math.PI;
+            wall01.position.z = 3000;
+
+        var wall03 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall03.rotation.x = Math.PI ;
+            wall03.position.z = 3000;
+
+        var wall04 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall04.rotation.x = Math.PI * 4;
+            wall04.position.z = -4000;
+
+scene.add(wall01,wall02,wall03,wall04);  
+
+    
+    // MOVE BALLOONS, MERCH FLOOD WATER + OPEN BOX LID
+    
+
+    //MOVE TO ISLAND TOP + REMOVE FOG
+    
+    scene.fog = '';
+    camera.position.set(302,410,-1200);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+        
+    //scene.remove(floor1,wall01,wall02,wall03,wall04);
+    //close kitchen scene
+    };
 //listener
 //play.addEventListener('click', function() {
     
@@ -1171,6 +1180,22 @@ function animate() {
         raycaster.ray.origin.y -= 10;
 
         var intersections = raycaster.intersectObjects(objects);
+        
+        //raycasting selection////////////////////////////////
+        var intersects = raycaster.intersectObjects( scene.children );
+
+	for ( let i = 0; i < intersects.length; i ++ ) {
+
+		// check interaction :: change colour
+        //intersects[ i ].object.material.color.set( 0xffffff );
+        
+console.log(scene.getObjectByName(intersects[ i ].object.name));
+if (scene.getObjectByName(intersects[ i ].object.name) == "deck04") {
+     loadKitchenScene();
+}
+	};
+        //////////////////////////////////////////////////
+        
         var onObject = intersections.length > 0;
         var time = performance.now();
         var delta = (time - prevTime) / 1000;
@@ -1222,8 +1247,6 @@ function onMouseDown(event){
 //Left Mouse Fire
 //Right Mouse Jump
     
-    //raycasting :: if star material = red
-    loadKitchenScene();
 }
 
 </script>
