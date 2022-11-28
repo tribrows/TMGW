@@ -1189,8 +1189,8 @@ function animate() {
 		// check interaction :: change colour
         //intersects[ i ].object.material.color.set( 0xffffff );
         
-console.log(scene.getObjectByName(intersects[ i ].object.name));
-if (scene.getObjectByName(intersects[ i ].object.name) == "deck04") {
+console.log(scene.getObjectByName(intersects[ i ].object.name).name);
+if (scene.getObjectByName(intersects[ i ].object.name).name == "deck04") {
      loadKitchenScene();
 }
 	};
