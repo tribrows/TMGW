@@ -461,15 +461,7 @@ deck04.name ="deck04";
 scene.add(deck04);
 objects.push( deck04 );
     
-    var geometry04 = new THREE.BoxBufferGeometry(2100, 30, 800).toNonIndexed(); 
-    var material = new THREE.MeshBasicMaterial({color: 0x00FFFF}); 
-    var island = new THREE.Mesh(geometry04, material); 
-island.position.x =700;
-island.position.y =380;
-island.position.z =-1400;
-island.name ="island";
-scene.add(island);
-objects.push( island );
+   
     
     //AMBIENT LIGHT
     
@@ -682,6 +674,7 @@ var star = new THREE.Mesh( starGeometry, starMaterial );
    //star.position.set(250,50,131);
     star.rotation.y = Math.PI / 2;
 	scene.add(star);
+    objects.push( star );
  
   var color = 0xFF0000;
     var intensity = 2;
@@ -832,10 +825,23 @@ play = document.getElementById('play');
 }
     
 function loadKitchenScene() {
-    // REMOVE ALL INTERNAL BOX ELEMENTS
-    //removeEntity(floor1); 
     
-    // ON DEMAND LOAD KITCHEN + ELEMENTS
+//REMOVE OBJECTS FROM LAST SCENES
+    for( var i = scene.children.length - 1; i >= 0; i--) { 
+     obj = scene.children[i];
+     scene.remove(obj); 
+}
+    var geometry04 = new THREE.BoxBufferGeometry(2100, 30, 800).toNonIndexed(); 
+    var material = new THREE.MeshBasicMaterial({color: 0x00FFFF}); 
+    var island = new THREE.Mesh(geometry04, material); 
+island.position.x =700;
+island.position.y =380;
+island.position.z =-1400;
+island.name ="island";
+scene.add(island);
+objects.push( island );
+
+// ON DEMAND LOAD KITCHEN + ELEMENTS
 var loader4 = new THREE.GLTFLoader();
 loader4.load( './models/kitchen/kitchen09.glb', function ( gltf ) {
 
@@ -863,15 +869,15 @@ render();
 		var wall01 =  new THREE.Mesh(floorGeometry1, floorMaterial );
             wall01.rotation.y = Math.PI / 2;
             wall01.rotation.x = Math.PI / 2;
-            wall01.position.x = -3000;
+            wall01.position.x = -4000;
 				//
         var wall02 =  new THREE.Mesh(floorGeometry1, floorMaterial );
             wall01.rotation.x = Math.PI;
-            wall01.position.z = 3000;
+            wall01.position.z = 4000;
 
         var wall03 =  new THREE.Mesh(floorGeometry1, floorMaterial );
             wall03.rotation.x = Math.PI ;
-            wall03.position.z = 3000;
+            wall03.position.z = 4000;
 
         var wall04 =  new THREE.Mesh(floorGeometry1, floorMaterial );
             wall04.rotation.x = Math.PI * 4;
@@ -890,6 +896,10 @@ scene.add(wall01,wall02,wall03,wall04);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
         
     //scene.remove(floor1,wall01,wall02,wall03,wall04);
+    
+ // floor terrain star lights cbmerch //gltfs balloons
+    
+    
     //close kitchen scene
     };
 //listener
