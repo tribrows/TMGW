@@ -95,7 +95,7 @@ var color = new THREE.Color();
 var VRButton = "";
 var controls = "";
 
-var playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water, blocker, instructions, play, learn, action;
+var playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water, blocker, instructions, play, learn, action, star, starlight;
     //RAYCASTER ////////////////////////////////////////////////
     		var INTERSECTED;
 			var theta = 0;
@@ -634,7 +634,8 @@ scene.add( random01);
 render();
 } );
     
-var ambient = new THREE.AmbientLight( 0x555555 ); scene.add(ambient);
+var ambient = new THREE.AmbientLight( 0x555555 ); 
+    scene.add(ambient);
 /*var materialSphere01 = new THREE.MeshLambertMaterial({
         color: 0x0000ff,
         transparent: true,
@@ -674,7 +675,7 @@ var materialSide = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
 	var starMaterial = new THREE.MeshFaceMaterial(materialArray);
 	
 var star = new THREE.Mesh( starGeometry, starMaterial );
-    star.name="star";
+    star.name = "star";
 	//var wireframeTexture = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } ); 
 	//var star = new THREE.Mesh( starGeometry, wireframeTexture );
 	star.position.set(-202,90,231);
@@ -682,6 +683,19 @@ var star = new THREE.Mesh( starGeometry, starMaterial );
     star.rotation.y = Math.PI / 2;
 	scene.add(star);
  
+  var color = 0xFF0000;
+    var intensity = 2;
+    var starlight = new THREE.DirectionalLight(color, intensity);
+    //var lightz = new THREE.SpotLightHelper();
+    starlight.position.set(-212,90,231);
+    starlight.target.position.set(-212,90,231);
+    scene.add(starlight);
+    scene.add(starlight.target);
+
+    //ATTACH HELP TO CAMERA AS GUIDE GAME MECHANIC
+ var helper = new THREE.DirectionalLightHelper(starlight);
+    scene.add(helper);  
+    
 ////////TRIGGER NEW SCENES :: KITCHEN //////
     //ADMIN SHORTCUTS :: SCENE NUMBERS :: 0 MENU
     
@@ -823,7 +837,7 @@ function loadKitchenScene() {
     
     // ON DEMAND LOAD KITCHEN + ELEMENTS
 var loader4 = new THREE.GLTFLoader();
-loader4.load( './models/kitchen/kitchen08.glb', function ( gltf ) {
+loader4.load( './models/kitchen/kitchen09.glb', function ( gltf ) {
 
 var kitchen = gltf.scene;
 kitchen.scale.set(500*kitchen.scale.x, 500*kitchen.scale.y, 500*kitchen.scale.z)
@@ -1115,6 +1129,8 @@ function render() {
     requestAnimationFrame(render);
     //controls.update();
     //scene.add(controls.getObject());
+    
+    
     renderer.render(scene, camera);
 
 //renderer.domElement.style.filter = `hue-rotate(2deg) opacity(35%) contrast(420%) blur( 18px )`;
@@ -1172,8 +1188,11 @@ overlay.style.display = 'none';
 }
     
 function animate() {
-
     requestAnimationFrame(animate);
+    //rotate star
+    //star.rotateY(0.01);
+    
+    
     if (controls.isLocked === true) {
 
         raycaster.ray.origin.copy(controls.getObject().position);
