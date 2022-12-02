@@ -95,7 +95,7 @@ var color = new THREE.Color();
 var VRButton = "";
 var controls = "";
 
-var playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water, blocker, instructions, play, learn, action, star, starlight;
+var playCanvas, learnCanvas, actionCanvas, camera, scene, renderer, clock, player, terrainScene, terrainPath, decoScene, lastOptions, fpsCamera, skyDome, skyLight, sand, water, blocker, instructions, play, learn, action, star, starlight, wall01, wall02, wall03, wall04;
     //RAYCASTER ////////////////////////////////////////////////
     		var INTERSECTED;
 			var theta = 0;
@@ -841,6 +841,7 @@ island.name ="island";
 scene.add(island);
 objects.push( island );
 
+scene.add( skyBox );
 // ON DEMAND LOAD KITCHEN + ELEMENTS
 var loader4 = new THREE.GLTFLoader();
 loader4.load( './models/kitchen/kitchen09.glb', function ( gltf ) {
@@ -864,24 +865,35 @@ render();
 	scene.add(floor1);  
     rotateObject(floor1, 40, 30, 20);
     
+    var floor1 = new THREE.Mesh(floorGeometry1, floorMaterial );
+	floor1.position.y = 3000;
+    
+	scene.add(floor1);  
+    rotateObject(floor1, 40, 30, 20);
+    
     //KITCHEN WALLS
 				//from island right
 		var wall01 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall01.name = "wall01";
+    wall01.color
             wall01.rotation.y = Math.PI / 2;
             wall01.rotation.x = Math.PI / 2;
-            wall01.position.x = -4000;
+            wall01.position.x = -6000;
 				//
         var wall02 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall01.name = "wall02";
             wall01.rotation.x = Math.PI;
-            wall01.position.z = 4000;
+            wall01.position.z = 6000;
 
         var wall03 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall01.name = "wall03";
             wall03.rotation.x = Math.PI ;
-            wall03.position.z = 4000;
+            wall03.position.z = 6000;
 
         var wall04 =  new THREE.Mesh(floorGeometry1, floorMaterial );
+            wall01.name = "wall04";
             wall04.rotation.x = Math.PI * 4;
-            wall04.position.z = -4000;
+            wall04.position.z = -6000;
 
 scene.add(wall01,wall02,wall03,wall04);  
 
