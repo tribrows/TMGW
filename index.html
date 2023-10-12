@@ -903,9 +903,10 @@ scene.add(wall01,wall02,wall03,wall04);
 
     //MOVE TO ISLAND TOP + REMOVE FOG
     
-    scene.fog = '';
-    camera.position.set(302,410,-1200);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+	scene.fog = '';
+	scene.fog = new THREE.FogExp2(0x330088, 0.0009); 
+	camera.position.set(302,410,-1200);
+	camera.lookAt(new THREE.Vector3(0, 0, 0));
         
     //scene.remove(floor1,wall01,wall02,wall03,wall04);
     
