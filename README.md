@@ -5,7 +5,7 @@
  #XR Game ,#WebGL learning application & #ClimateAction Information
  
  Progress :: [todo :: image automation for testing//performance]
-![screenshot001](https://user-images.githubusercontent.com/112782161/193713314-3088c992-b1c7-4f91-8922-5766bbbc6f1a.png)
+
 ![Screenshot 2023-10-12 at 21-57-25 Play](https://github.com/tribrows/tmgw/assets/112782161/f1ce641a-d7a5-474f-8b85-20e6d2c01ecb)
 
 
